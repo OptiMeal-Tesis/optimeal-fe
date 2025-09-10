@@ -201,7 +201,6 @@
 
 a {
   font-weight: 500;
-  color: var(--color-gray-500);
   text-decoration: underline;
 }
 
@@ -233,9 +232,5 @@ button:hover {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
-
-  button {
-    background-color: #f9f9f9;
   }
 }

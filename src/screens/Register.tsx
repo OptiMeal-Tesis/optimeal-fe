@@ -59,10 +59,8 @@ export default function Register() {
           email: formData.email,
           password: formData.password
         });
-        // Registration successful, redirect to login
-        navigate('/login', { 
-          state: { message: 'Cuenta creada exitosamente. Por favor inicia sesión.' }
-        });
+        // Registration successful, redirect to success screen
+        navigate('/success');
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error al crear la cuenta';
         setApiError(errorMessage);
