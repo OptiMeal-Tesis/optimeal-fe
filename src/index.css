@@ -1,11 +1,197 @@
+/* Import Futura font */
+@import url('https://fonts.cdnfonts.com/css/futura-pt');
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary-300: #67A3FF;
+  --color-primary-400: #3B75D4;
+  --color-primary-500: #0D47A1;
+  --color-primary-600: #0B3F8A;
+  --color-primary-700: #093471;
+  
+  --color-white: #FFFFFF;
+  --color-gray-100: #F3F3F3;
+  --color-gray-200: #E0E0E0;
+  --color-gray-300: #BDBDBD;
+  --color-gray-400: #9E9E9E;
+  --color-gray-500: #757575;
+  --color-gray-600: #5D5D5D;
+  --color-black: #212121;
+  
+  --color-success: #4CAF50;
+  --color-error: #F44336;
+
+  /* Typography */
+  --font-family-sans: "Futura", system-ui, sans-serif;
+  
+  /* Font sizes and line heights */
+  --font-size-h1: 36px;
+  --font-size-h2: 28px;
+  --font-size-h3: 24px;
+  --font-size-sub1: 20px;
+  --font-size-body1: 16px;
+  --font-size-body2: 14px;
+  --font-size-label: 12px;
+  
+  --line-height-h1: 110%;
+  --line-height-h2: 110%;
+  --line-height-h3: 110%;
+  --line-height-sub1: 110%;
+  --line-height-body1: 110%;
+  --line-height-body2: 110%;
+  --line-height-label: 110%;
+}
+
+/* Typography utility classes */
+.text-h1 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
+  font-weight: 400;
+}
+
+.text-h2 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-h2);
+  font-weight: 400;
+}
+
+.text-h3 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-h3);
+  font-weight: 400;
+}
+
+.text-sub1 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sub1);
+  line-height: var(--line-height-sub1);
+  font-weight: 400;
+}
+
+.text-body1 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body1);
+  line-height: var(--line-height-body1);
+  font-weight: 400;
+}
+
+.text-body2 {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body2);
+  line-height: var(--line-height-body2);
+  font-weight: 400;
+}
+
+.text-label {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-label);
+  font-weight: 400;
+}
+
+/* Bold variants */
+.text-h1-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-h1);
+  font-weight: 700;
+}
+
+.text-h2-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-h2);
+  font-weight: 700;
+}
+
+.text-h3-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-h3);
+  font-weight: 700;
+}
+
+.text-sub1-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sub1);
+  line-height: var(--line-height-sub1);
+  font-weight: 700;
+}
+
+.text-body1-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body1);
+  line-height: var(--line-height-body1);
+  font-weight: 700;
+}
+
+.text-body2-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-body2);
+  line-height: var(--line-height-body2);
+  font-weight: 700;
+}
+
+.text-label-bold {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-label);
+  font-weight: 700;
+}
+
+/* Color utility classes */
+.bg-success {
+  background-color: var(--color-success);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+/* Color utility classes */
+.bg-success {
+  background-color: var(--color-success);
+}
+
+.bg-primary {
+  background-color: var(--color-primary-500);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family-sans);
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+
+  width: 100%;
+  height: 100%;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,11 +201,8 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  color: var(--color-gray-500);
+  text-decoration: underline;
 }
 
 body {
@@ -37,21 +220,13 @@ h1 {
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: --color-primary-500;
 }
 button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border-color: --color-primary-500;
 }
 
 @media (prefers-color-scheme: light) {
@@ -59,9 +234,7 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
-  }
+
   button {
     background-color: #f9f9f9;
   }
