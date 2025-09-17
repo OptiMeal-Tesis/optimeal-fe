@@ -5,23 +5,61 @@ import SuccessScreen from "./screens/SuccessScreen";
 import Home from "./screens/Home";
 import Orders from "./screens/Orders";
 import EditProfile from "./screens/EditProfile";
+import CheckoutPage from "./screens/CheckoutPage";
+import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
+import { CartProvider } from "./cart/CartContext";
 import { BrowserRouter as Router, Navigate,Route, Routes } from "react-router-dom";
 
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/success" element={<SuccessScreen />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+    <CartProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          
+          <Route path="/login" element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+          <Route path="/register" element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          } />
+          <Route path="/success" element={
+            <PublicRoute>
+              <SuccessScreen />
+            </PublicRoute>
+          } />
+          
+          <Route path="/home" element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          } />
+          <Route path="/orders" element={
+            <PrivateRoute>
+              <Orders />
+            </PrivateRoute>
+          } />
+          <Route path="/edit-profile" element={
+            <PrivateRoute>
+              <EditProfile />
+            </PrivateRoute>
+          } />
+          <Route path="/checkout" element={
+            <PrivateRoute>
+              <CheckoutPage />
+            </PrivateRoute>
+          } />
+          
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 export default App;

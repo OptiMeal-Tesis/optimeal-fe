@@ -1,0 +1,216 @@
+import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import { Product, ProductId, CartState, CartItem, persistCart, readCart } from '../domain/cart';
+
+// Action types
+type Action =
+  | { type: "ADD"; product: Product }
+  | { type: "INCREASE"; productId: ProductId }
+  | { type: "DECREASE"; productId: ProductId }
+  | { type: "REMOVE"; productId: ProductId }
+  | { type: "CLEAR" };
+
+// Cart actions interface
+export type CartActions = {
+  add: (product: Product) => void;
+  increase: (productId: ProductId) => void;
+  decrease: (productId: ProductId) => void;
+  remove: (productId: ProductId) => void;
+  clear: () => void;
+};
+
+// Cart API interface
+export type CartApi = CartState & CartActions;
+
+// Calculate subtotal from items
+const calculateSubtotal = (items: Record<ProductId, CartItem>): number => {
+  return Object.values(items).reduce((sum, item) => sum + item.price * item.quantity, 0);
+};
+
+// Cart reducer
+const cartReducer = (state: CartState, action: Action): CartState => {
+  let newState: CartState;
+
+  switch (action.type) {
+    case "ADD": {
+      const { product } = action;
+      const existingItem = state.items[product.id];
+      
+      if (existingItem) {
+        // Increase quantity if product already exists
+        newState = {
+          ...state,
+          items: {
+            ...state.items,
+            [product.id]: {
+              ...existingItem,
+              quantity: existingItem.quantity + 1,
+            },
+          },
+        };
+      } else {
+        // Add new item
+        newState = {
+          ...state,
+          items: {
+            ...state.items,
+            [product.id]: {
+              productId: product.id,
+              quantity: 1,
+              price: product.price,
+              name: product.name,
+              photo: product.photo,
+            },
+          },
+        };
+      }
+      break;
+    }
+
+    case "INCREASE": {
+      const { productId } = action;
+      const item = state.items[productId];
+      
+      if (item) {
+        newState = {
+          ...state,
+          items: {
+            ...state.items,
+            [productId]: {
+              ...item,
+              quantity: item.quantity + 1,
+            },
+          },
+        };
+      } else {
+        newState = state;
+      }
+      break;
+    }
+
+    case "DECREASE": {
+      const { productId } = action;
+      const item = state.items[productId];
+      
+      if (item) {
+        if (item.quantity <= 1) {
+          // Remove item when quantity reaches 0
+          const { [productId]: removed, ...remainingItems } = state.items;
+          newState = {
+            ...state,
+            items: remainingItems,
+          };
+        } else {
+          // Decrease quantity
+          newState = {
+            ...state,
+            items: {
+              ...state.items,
+              [productId]: {
+                ...item,
+                quantity: item.quantity - 1,
+              },
+            },
+          };
+        }
+      } else {
+        newState = state;
+      }
+      break;
+    }
+
+    case "REMOVE": {
+      const { productId } = action;
+      const { [productId]: removed, ...remainingItems } = state.items;
+      newState = {
+        ...state,
+        items: remainingItems,
+      };
+      break;
+    }
+
+    case "CLEAR": {
+      newState = { items: {}, subtotal: 0 };
+      break;
+    }
+
+    default:
+      newState = state;
+  }
+
+  // Calculate subtotal
+  newState.subtotal = calculateSubtotal(newState.items);
+  
+  return newState;
+};
+
+// Create context
+const CartContext = createContext<CartApi | undefined>(undefined);
+
+// Cart provider component
+interface CartProviderProps {
+  children: ReactNode;
+}
+
+export function CartProvider({ children }: CartProviderProps) {
+  const [state, dispatch] = useReducer(cartReducer, { items: {}, subtotal: 0 });
+
+  // Load initial state from localStorage
+  useEffect(() => {
+    const savedCart = readCart();
+    if (savedCart.items && Object.keys(savedCart.items).length > 0) {
+      // Recalculate subtotal to ensure consistency
+      const subtotal = calculateSubtotal(savedCart.items);
+      dispatch({ type: "CLEAR" }); // Reset first
+      // Then restore items one by one
+      Object.values(savedCart.items).forEach(item => {
+        for (let i = 0; i < item.quantity; i++) {
+          dispatch({
+            type: "ADD",
+            product: {
+              id: item.productId,
+              name: item.name,
+              description: "",
+              price: item.price,
+              photo: item.photo,
+              restrictions: [],
+            },
+          });
+        }
+      });
+    }
+  }, []);
+
+  // Persist to localStorage on every state change
+  useEffect(() => {
+    persistCart(state);
+  }, [state]);
+
+  // Cart actions
+  const actions: CartActions = {
+    add: (product: Product) => dispatch({ type: "ADD", product }),
+    increase: (productId: ProductId) => dispatch({ type: "INCREASE", productId }),
+    decrease: (productId: ProductId) => dispatch({ type: "DECREASE", productId }),
+    remove: (productId: ProductId) => dispatch({ type: "REMOVE", productId }),
+    clear: () => dispatch({ type: "CLEAR" }),
+  };
+
+  const cartApi: CartApi = {
+    ...state,
+    ...actions,
+  };
+
+  return (
+    <CartContext.Provider value={cartApi}>
+      {children}
+    </CartContext.Provider>
+  );
+}
+
+// Hook to use cart
+export function useCart(): CartApi {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+}
