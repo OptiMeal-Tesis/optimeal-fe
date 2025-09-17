@@ -19,7 +19,6 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-6">
-            <h2 className="text-h3 text-black font-bold mb-4">Items en tu carrito</h2>
             
             {cartItems.map((item) => (
               <div key={item.productId} className="flex gap-4 bg-white rounded-xl p-4 border border-gray-200">
