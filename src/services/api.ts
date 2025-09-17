@@ -6,16 +6,16 @@ export interface LoginRequest {
     password: string;
 }
 
-export interface LoginResponse {
+export interface AuthResponse {
     success: boolean;
     message: string;
-    accessToken: string;
-    refreshToken: string;
-    idToken: string;
-    data: {
-        email: string;
-        expiresIn: number;
-    };
+    data?: any;
+}
+
+export interface LoginResponse extends AuthResponse {
+    accessToken?: string;
+    refreshToken?: string;
+    idToken?: string;
 }
 
 export interface RegisterRequest {
@@ -25,14 +25,27 @@ export interface RegisterRequest {
     national_id: string;
 }
 
-export interface RegisterResponse {
-    success: boolean;
-    message: string;
+export interface RegisterResponse extends AuthResponse {
     data?: {
         email: string;
         name: string;
         national_id: string;
     };
+}
+
+export interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    photo?: string;
+    restrictions: string[];
+}
+
+export interface ProductsResponse {
+    success: boolean;
+    message: string;
+    data: Product[];
 }
 
 // Generic API interfaces
@@ -54,15 +67,27 @@ class ApiService {
         this.baseURL = baseURL;
     }
 
+    private getAccessToken(): string | null {
+        try {
+            return localStorage.getItem('optimeal_access_token');
+        } catch (error) {
+            console.error('Error retrieving access token:', error);
+            return null;
+        }
+    }
+
     private async request<T>(
         endpoint: string,
         options: RequestInit = {}
     ): Promise<T> {
         const url = `${this.baseURL}${endpoint}`;
 
+        const accessToken = this.getAccessToken();
+
         const config: RequestInit = {
             headers: {
                 'Content-Type': 'application/json',
+                ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
                 ...options.headers,
             },
             ...options,
@@ -96,6 +121,12 @@ class ApiService {
         return this.request<RegisterResponse>('/auth/signup', {
             method: 'POST',
             body: JSON.stringify(userData),
+        });
+    }
+
+    async getProducts(): Promise<ProductsResponse> {
+        return this.request<ProductsResponse>('/products', {
+            method: 'GET',
         });
     }
 }
