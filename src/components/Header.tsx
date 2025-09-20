@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   return (
-    <div className="bg-white px-6 py-4 flex items-center justify-between">
+    <div className="bg-white px-6 py-4 flex items-center justify-between border-b-2" style={{ borderBottomColor: 'var(--color-gray-200)' }}>
       <Logo width={138} height={32} />
       <button
         onClick={onMenuClick}

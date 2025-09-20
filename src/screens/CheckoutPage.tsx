@@ -1,4 +1,4 @@
-import { useCart } from "../cart/CartContext";
+import { useCart } from "../cart";
 import QuantityControl from "../components/QuantityControl";
 import PageHeader from "../components/PageHeader";
 

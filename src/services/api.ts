@@ -95,13 +95,15 @@ class ApiService {
 
         try {
             const response = await fetch(url, config);
+            const responseData = await response.json();
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                const error = new Error(responseData.message || `HTTP error! status: ${response.status}`);
+                (error as any).status = response.status;
+                throw error;
             }
 
-            return await response.json();
+            return responseData;
         } catch (error) {
             if (error instanceof Error) {
                 throw error;

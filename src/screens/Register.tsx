@@ -20,7 +20,7 @@ export default function Register() {
     national_id?: string;
     email?: string;
     password?: string;
-    confirmPassword?: string;
+    confirmPassword?: string; 
   }>({});
 
   const [isLoading, setIsLoading] = useState(false);
@@ -31,22 +31,48 @@ export default function Register() {
     setApiError(null);
     const next: typeof errors = {};
     
-    // Validaciones
-    if (!formData.name.trim()) next.name = "El nombre es obligatorio";
-    if (!formData.national_id.trim()) next.national_id = "El DNI es obligatorio";
-    if (!formData.email.trim()) next.email = "El email es obligatorio";
-    if (!formData.password.trim()) next.password = "La contraseña es obligatoria";
-    if (!formData.confirmPassword.trim()) next.confirmPassword = "Confirmar contraseña es obligatorio";
-    
-    // Validación de contraseñas coincidentes
-    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
-      next.confirmPassword = "Las contraseñas no coinciden";
+    // Validaciones frontend (matching backend rules)
+    if (!formData.name.trim()) {
+      next.name = "El nombre es obligatorio";
+    } else if (formData.name.trim().length < 2) {
+      next.name = "El nombre debe tener al menos 2 caracteres";
     }
     
-    // Validación de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailRegex.test(formData.email)) {
-      next.email = "Ingrese un email válido";
+    if (!formData.national_id.trim()) {
+      next.national_id = "El DNI es obligatorio";
+    } else if (!/^\d{7,10}$/.test(formData.national_id)) {
+      next.national_id = "El DNI debe tener entre 7-10 dígitos";
+    }
+    
+    if (!formData.email.trim()) {
+      next.email = "El email es obligatorio";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        next.email = "Formato de email inválido";
+      }
+    }
+    
+    if (!formData.password.trim()) {
+      next.password = "La contraseña es obligatoria";
+    } else if (formData.password.length < 8) {
+      next.password = "La contraseña debe tener al menos 8 caracteres";
+    } else {
+      // Check password security requirements
+      const hasUpperCase = /[A-Z]/.test(formData.password);
+      const hasLowerCase = /[a-z]/.test(formData.password);
+      const hasNumbers = /\d/.test(formData.password);
+      const hasSpecialChar = /[^A-Za-z0-9]/.test(formData.password);
+      
+      if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+        next.password = "Use al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (./?$#@)";
+      }
+    }
+    
+    if (!formData.confirmPassword.trim()) {
+      next.confirmPassword = "Confirmar contraseña es obligatorio";
+    } else if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      next.confirmPassword = "Las contraseñas no coinciden";
     }
     
     setErrors(next);
@@ -59,11 +85,17 @@ export default function Register() {
           email: formData.email,
           password: formData.password
         });
-        // Registration successful, redirect to success screen
         navigate('/success');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error al crear la cuenta';
-        setApiError(errorMessage);
+        console.log('Caught error:', error);
+        console.log('Error message:', error instanceof Error ? error.message : 'Unknown error');
+        
+        if (error instanceof Error) {
+          console.log('Setting apiError to:', error.message);
+          setApiError(error.message);
+        } else {
+          setApiError('Error al crear la cuenta');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -73,9 +105,11 @@ export default function Register() {
   function handleInputChange(field: keyof typeof formData) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData(prev => ({ ...prev, [field]: e.target.value }));
-      // Limpiar error cuando el usuario empiece a escribir
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: undefined }));
+      }
+      if (apiError) {
+        setApiError(null);
       }
     };
   }

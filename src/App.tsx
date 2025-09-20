@@ -8,15 +8,16 @@ import EditProfile from "./screens/EditProfile";
 import CheckoutPage from "./screens/CheckoutPage";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
-import { CartProvider } from "./cart/CartContext";
+import { CartProvider } from "./cart";
 import { BrowserRouter as Router, Navigate,Route, Routes } from "react-router-dom";
 
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <Routes>
+    <div className="h-screen overflow-hidden">
+      <CartProvider>
+        <Router>
+          <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           
           <Route path="/login" element={
@@ -57,9 +58,10 @@ function App() {
           } />
           
           <Route path="*" element={<Navigate to="/home" replace />} />
-        </Routes>
-      </Router>
-    </CartProvider>
+          </Routes>
+        </Router>
+      </CartProvider>
+    </div>
   );
 }
 export default App;

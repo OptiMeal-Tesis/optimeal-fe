@@ -19,13 +19,17 @@ export default function Login() {
     setApiError(null);
     const next: typeof errors = {};
     
-    if (!email.trim()) next.email = "El email es obligatorio";
-    if (!password.trim()) next.password = "La contraseña es obligatoria";
+    if (!email.trim()) {
+      next.email = "El email es obligatorio";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        next.email = "Formato de email inválido";
+      }
+    }
     
-    // Validación de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email && !emailRegex.test(email)) {
-      next.email = "Ingrese un email válido";
+    if (!password.trim()) {
+      next.password = "La contraseña es requerida";
     }
     
     setErrors(next);
@@ -36,8 +40,19 @@ export default function Login() {
         // Login successful, redirect to home
         navigate('/home');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Error de autenticación';
-        setApiError(errorMessage);
+        if (error instanceof Error) {
+          const errorMessage = error.message.toLowerCase();
+          // Check if it's a password-related error
+          if (errorMessage.includes('contraseña') && errorMessage.includes('requisitos de seguridad')) {
+            setApiError(error.message);
+          } else if (errorMessage.includes('credenciales inválidas') || errorMessage.includes('usuario no confirmado')) {
+            setApiError(error.message);
+          } else {
+            setApiError(error.message);
+          }
+        } else {
+          setApiError('Error de autenticación');
+        }
       } finally {
         setIsLoading(false);
       }

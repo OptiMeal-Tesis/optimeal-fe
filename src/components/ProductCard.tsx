@@ -52,7 +52,7 @@ export default function ProductCard({
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
   return (
-    <div className="w-full flex gap-1.5 bg-white rounded-xl">
+    <div className="w-full flex gap-1.5 rounded-xl">
       <img
         src={photo}
         alt={name}

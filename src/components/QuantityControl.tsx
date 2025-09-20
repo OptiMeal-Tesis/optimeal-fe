@@ -12,9 +12,9 @@ export default function QuantityControl({ quantity, onDecrease, onIncrease }: Qu
         border: '2px solid var(--color-primary-500)'
       }}
     >
-      <button type="button" className="text-label-bold" onClick={onDecrease}>-</button>
-      <span className="text-label-bold text-black select-none">{quantity}</span>
-      <button type="button" className="text-label-bold" onClick={onIncrease}>+</button>
+      <button type="button" className="text-body2-bold text-primary-500" onClick={onDecrease}>-</button>
+      <span className="text-body2-bold text-primary-500 select-none">{quantity}</span>
+      <button type="button" className="text-body2-bold text-primary-500" onClick={onIncrease}>+</button>
     </div>
   );
 }

@@ -88,7 +88,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
               className="px-3 py-4"
             >
               <ListItemIcon sx={{ minWidth: '32px' }} className="min-w-0">
-                <LogoutIcon width={24} height={24} color="var(--color-error)" />
+                <LogoutIcon width={24} height={24} color="var(--color-gray-500)" />
               </ListItemIcon>
               <ListItemText 
                 primary="Cerrar sesión"
@@ -96,7 +96,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
                   primary: {
                     fontFamily: 'var(--font-family-sans)',
                     fontSize: 'var(--body1)',
-                    color: 'var(--color-error)'
+                    color: 'var(--color-gray-500)'
                   }
                 }}
               />

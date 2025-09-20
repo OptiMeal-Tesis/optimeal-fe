@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Product, ProductId, CartState, CartItem, persistCart, readCart } from '../domain/cart';
+import { Product, ProductId, CartState, CartItem, persistCart, readCart } from './cart';
 
 // Action types
 type Action =
@@ -144,7 +144,7 @@ const cartReducer = (state: CartState, action: Action): CartState => {
 };
 
 // Create context
-const CartContext = createContext<CartApi | undefined>(undefined);
+const Index = createContext<CartApi | undefined>(undefined);
 
 // Cart provider component
 interface CartProviderProps {
@@ -200,15 +200,15 @@ export function CartProvider({ children }: CartProviderProps) {
   };
 
   return (
-    <CartContext.Provider value={cartApi}>
+    <Index.Provider value={cartApi}>
       {children}
-    </CartContext.Provider>
+    </Index.Provider>
   );
 }
 
 // Hook to use cart
 export function useCart(): CartApi {
-  const context = useContext(CartContext);
+  const context = useContext(Index);
   if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
