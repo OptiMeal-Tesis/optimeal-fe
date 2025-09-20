@@ -9,8 +9,8 @@ type Action =
   | { type: "REMOVE"; productId: ProductId }
   | { type: "CLEAR" };
 
-// Cart actions interface
-export type CartActions = {
+
+  export type CartActions = {
   add: (product: Product) => void;
   increase: (productId: ProductId) => void;
   decrease: (productId: ProductId) => void;
@@ -59,6 +59,8 @@ const cartReducer = (state: CartState, action: Action): CartState => {
               price: product.price,
               name: product.name,
               photo: product.photo,
+              sides: product.sides || [],
+              selectedSide: null,
             },
           },
         };
@@ -158,10 +160,8 @@ export function CartProvider({ children }: CartProviderProps) {
   useEffect(() => {
     const savedCart = readCart();
     if (savedCart.items && Object.keys(savedCart.items).length > 0) {
-      // Recalculate subtotal to ensure consistency
       const subtotal = calculateSubtotal(savedCart.items);
-      dispatch({ type: "CLEAR" }); // Reset first
-      // Then restore items one by one
+      dispatch({ type: "CLEAR" });
       Object.values(savedCart.items).forEach(item => {
         for (let i = 0; i < item.quantity; i++) {
           dispatch({
@@ -173,6 +173,12 @@ export function CartProvider({ children }: CartProviderProps) {
               price: item.price,
               photo: item.photo,
               restrictions: [],
+              sides: item.sides || [],
+              admitsClarifications: false,
+              type: "",
+              stock: 0,
+              createdAt: "",
+              updatedAt: "",
             },
           });
         }
@@ -206,7 +212,6 @@ export function CartProvider({ children }: CartProviderProps) {
   );
 }
 
-// Hook to use cart
 export function useCart(): CartApi {
   const context = useContext(Index);
   if (context === undefined) {

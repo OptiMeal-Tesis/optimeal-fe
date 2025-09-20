@@ -33,6 +33,12 @@ export interface RegisterResponse extends AuthResponse {
     };
 }
 
+export interface Side {
+    id: string;
+    name: string;
+    isActive: boolean;
+}
+
 export interface Product {
     id: string;
     name: string;
@@ -40,6 +46,12 @@ export interface Product {
     price: number;
     photo?: string;
     restrictions: string[];
+    sides: Side[];
+    admitsClarifications: boolean;
+    type: string;
+    stock: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface ProductsResponse {

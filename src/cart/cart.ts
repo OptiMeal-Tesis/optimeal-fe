@@ -1,3 +1,5 @@
+import { Side } from '../services/api';
+
 export type ProductId = string;
 
 export interface Product {
@@ -7,14 +9,22 @@ export interface Product {
   price: number; // integer in ARS, no decimals
   photo?: string;
   restrictions: string[];
+  sides: Side[];
+  admitsClarifications: boolean;
+  type: string;
+  stock: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CartItem {
   productId: ProductId;
-  quantity: number; // >= 0
-  price: number; // snapshot of unit price
-  name: string;  // snapshot for summary
+  quantity: number; 
+  price: number; 
+  name: string;  
   photo?: string;
+  sides: Side[];
+  selectedSide?: string | null;
 }
 
 export interface CartState {
