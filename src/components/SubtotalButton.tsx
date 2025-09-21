@@ -10,13 +10,14 @@ interface SubtotalButtonProps {
 export default function SubtotalButton({ subtotal, disabled, onContinue, className }: SubtotalButtonProps) {
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
-
-
   return (
-    <div
-      className={`fixed left-4 right-4 bottom-4 z-50 ${disabled ? "bg-gray-200" : "bg-primary"} rounded-xl shadow-lg px-6 py-4 flex items-center justify-between ${className ?? ""}`}
-      role="region"
-      aria-label="Resumen de compra"
+    <button
+      type="button"
+      onClick={onContinue}
+      disabled={disabled}
+      className={`fixed left-4 right-4 bottom-4 z-50 ${disabled ? "bg-gray-200" : "bg-primary"} rounded-xl shadow-lg px-6 py-4 flex items-center justify-between ${className ?? ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+      aria-label="Resumen de compra - Continuar"
+      aria-disabled={disabled}
     >
       <div className="flex items-center gap-4">
         <CartIcon width={24} height={25} color={disabled ? "black" : "white"} />
@@ -26,15 +27,9 @@ export default function SubtotalButton({ subtotal, disabled, onContinue, classNa
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onContinue}
-        disabled={disabled}
-        className={`text-sub1-bold ${disabled ? "text-gray-400 cursor-not-allowed" : "text-white"}`}
-        aria-disabled={disabled}
-      >
+      <span className={`text-sub1-bold ${disabled ? "text-gray-400" : "text-white"}`}>
         Continuar
-      </button>
-    </div>
+      </span>
+    </button>
   );
 }
