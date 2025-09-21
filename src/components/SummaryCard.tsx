@@ -6,7 +6,6 @@ import { Side } from '../services/api';
 interface SummaryCardProps {
   productId: string;
   name: string;
-  description?: string;
   price: number;
   quantity: number;
   photo?: string;
@@ -21,7 +20,6 @@ interface SummaryCardProps {
 export default function SummaryCard({
   productId,
   name,
-  description,
   price,
   quantity,
   photo,

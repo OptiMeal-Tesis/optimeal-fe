@@ -224,9 +224,6 @@ button {
   transition: border-color 0.25s;
   color: --color-primary-500;
 }
-button:hover {
-  border-color: --color-primary-500;
-}
 
 @media (prefers-color-scheme: light) {
   :root {

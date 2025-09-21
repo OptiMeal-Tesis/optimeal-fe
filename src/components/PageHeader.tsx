@@ -14,7 +14,7 @@ export default function PageHeader({ title, subtitle }: PageHeaderProps) {
   };
 
   return (
-    <div className="bg-white p-4 flex items-center relative">
+    <div className="sticky top-0 z-40 bg-white p-4 flex items-center relative border-b border-gray-100">
       <button
         onClick={handleBack}
         className="py-3 absolute left-4 z-10"
