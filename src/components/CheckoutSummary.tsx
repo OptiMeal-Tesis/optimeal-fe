@@ -60,7 +60,7 @@ export default function CheckoutSummary({
   };
 
   return (
-    <div className={`fixed left-4 right-4 bottom-4 z-50 rounded-xl overflow-hidden ${className}`}>
+    <div className={`fixed left-4 right-4 bottom-4 z-50 overflow-hidden ${className}`}>
       {/* Pickup time input */}
       <div className={`px-6 py-4 bg-white ${isDisabled ? "border-2 border-gray-200 border-b-0" : "border-2 border-primary-500 border-b-0"} rounded-t-xl`}>
         <h3 className="text-body1 text-primary-500 mb-2.5">Horario de retiro</h3>
@@ -105,7 +105,21 @@ export default function CheckoutSummary({
       </div>
 
       {/* Subtotal and Pay Button */}
-      <div className={`px-6 py-4 ${isDisabled ? "bg-gray-200 border-2 border-gray-200" : "bg-primary-500 border-2 border-primary-500"} rounded-b-xl flex items-center justify-between`}>
+      <button
+        type="button"
+        onClick={onCheckout}
+        disabled={isDisabled}
+        className={`w-full px-6 py-4 ${isDisabled ? "bg-gray-200 border-2 border-gray-200" : "bg-primary-500 border-2 border-primary-500"} flex items-center justify-between ${
+          !isDisabled ? 'cursor-pointer' : 'cursor-not-allowed'
+        }`}
+        style={{
+          borderTopLeftRadius: '0px',
+          borderTopRightRadius: '0px',
+          borderBottomLeftRadius: '12px',
+          borderBottomRightRadius: '12px'
+        }}
+        aria-disabled={isDisabled}
+      >
         <div className="flex items-center gap-4">
           <CartIcon width={24} height={25} color={!isDisabled ? "white" : "black"} />
           <div className="flex flex-col gap-1">
@@ -120,20 +134,14 @@ export default function CheckoutSummary({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onCheckout}
-          disabled={isDisabled}
-          className={`py-3 rounded-lg text-sub1-bold ${
-            !isDisabled 
-              ? 'text-white' 
-              : 'text-gray-400 cursor-not-allowed'
-          }`}
-          aria-disabled={isDisabled}
-        >
+        <span className={`text-sub1-bold ${
+          !isDisabled 
+            ? 'text-white' 
+            : 'text-gray-400'
+        }`}>
           Pagar
-        </button>
-      </div>
+        </span>
+      </button>
     </div>
   );
 }

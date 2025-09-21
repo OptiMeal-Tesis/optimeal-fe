@@ -1,4 +1,3 @@
-import React from 'react';
 import QuantityControl from './QuantityControl';
 import EditIcon from '../assets/icons/EditIcon';
 import { Side } from '../services/api';
@@ -36,7 +35,7 @@ export default function SummaryCard({
     if (quantity > 1) {
       onQuantityChange(productId, quantity - 1);
     } else {
-      onQuantityChange(productId, 0); // Remove item
+      onQuantityChange(productId, 0); 
     }
   };
 
@@ -80,7 +79,7 @@ export default function SummaryCard({
         <div className="flex flex-col gap-1">
           <h3 className="text-body1 text-black">{name}</h3>
           {showSideText && (
-            <p className={`text-body2 ${isSideSelected ? 'text-gray-600' : 'text-color-error'}`}>
+            <p className={`text-body2 ${isSideSelected ? 'text-gray-600' : 'text-error'}`}>
               {getSideText()}
             </p>
           )}
