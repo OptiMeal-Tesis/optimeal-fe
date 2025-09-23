@@ -25,6 +25,7 @@ export interface CartItem {
   photo?: string;
   sides: Side[];
   selectedSide?: string | null;
+  clarifications?: string | null;
 }
 
 export interface CartState {

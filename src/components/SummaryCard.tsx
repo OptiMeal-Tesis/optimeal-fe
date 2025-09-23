@@ -2,7 +2,7 @@ import QuantityControl from './QuantityControl';
 import EditIcon from '../assets/icons/EditIcon';
 import { Side } from '../services/api';
 
-interface SummaryCardProps {
+interface SummaryItemCardProps {
   productId: string;
   name: string;
   price: number;
@@ -16,7 +16,7 @@ interface SummaryCardProps {
   className?: string;
 }
 
-export default function SummaryCard({
+export default function SummaryItemCard({
   productId,
   name,
   price,
@@ -28,7 +28,7 @@ export default function SummaryCard({
   onEdit,
   showEditButton = true,
   className = ""
-}: SummaryCardProps) {
+}: SummaryItemCardProps) {
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
   const handleDecrease = () => {

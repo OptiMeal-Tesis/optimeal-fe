@@ -17,16 +17,29 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   ...props
 }) => {
   return (
-        <Button
+    <Button
       variant={variant}
       size={size}
       fullWidth={fullWidth}
-      className={`text-body1 ${className}`}
+      className={`${className}`}
       sx={{
         borderRadius: '12px',
         textTransform: 'none',
         fontWeight: 700,
-        height: size === 'large' ? '34px' : size === 'medium' ? '24px' : '12px',
+        minHeight: size === 'large' ? '34px' : size === 'medium' ? '24px' : '12px',
+        '&.MuiButton-root': {
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          lineHeight: 'inherit',
+          padding: 'inherit',
+          margin: 'inherit',
+          width: 'inherit',
+          height: 'inherit',
+          minHeight: 'inherit',
+          maxHeight: 'inherit',
+          minWidth: 'inherit',
+          maxWidth: 'inherit',
+        },
         ...(variant === 'contained' && {
           backgroundColor: 'var(--color-primary-500)',
           color: '#fff',

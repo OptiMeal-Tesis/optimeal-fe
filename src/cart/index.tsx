@@ -4,6 +4,8 @@ import { Product, ProductId, CartState, CartItem, persistCart, readCart } from '
 // Action types
 type Action =
   | { type: "ADD"; product: Product }
+  | { type: "UPDATE_ITEM"; item: CartItem }
+  | { type: "ADD_ITEM"; item: CartItem }
   | { type: "INCREASE"; productId: ProductId }
   | { type: "DECREASE"; productId: ProductId }
   | { type: "REMOVE"; productId: ProductId }
@@ -12,6 +14,8 @@ type Action =
 
   export type CartActions = {
   add: (product: Product) => void;
+  updateItem: (item: CartItem) => void;
+  addItem: (item: CartItem) => void;
   increase: (productId: ProductId) => void;
   decrease: (productId: ProductId) => void;
   remove: (productId: ProductId) => void;
@@ -65,6 +69,30 @@ const cartReducer = (state: CartState, action: Action): CartState => {
           },
         };
       }
+      break;
+    }
+
+    case "UPDATE_ITEM": {
+      const { item } = action;
+      newState = {
+        ...state,
+        items: {
+          ...state.items,
+          [item.productId]: item,
+        },
+      };
+      break;
+    }
+
+    case "ADD_ITEM": {
+      const { item } = action;
+      newState = {
+        ...state,
+        items: {
+          ...state.items,
+          [item.productId]: item,
+        },
+      };
       break;
     }
 
@@ -194,6 +222,8 @@ export function CartProvider({ children }: CartProviderProps) {
   // Cart actions
   const actions: CartActions = {
     add: (product: Product) => dispatch({ type: "ADD", product }),
+    updateItem: (item: CartItem) => dispatch({ type: "UPDATE_ITEM", item }),
+    addItem: (item: CartItem) => dispatch({ type: "ADD_ITEM", item }),
     increase: (productId: ProductId) => dispatch({ type: "INCREASE", productId }),
     decrease: (productId: ProductId) => dispatch({ type: "DECREASE", productId }),
     remove: (productId: ProductId) => dispatch({ type: "REMOVE", productId }),

@@ -1,14 +1,69 @@
+import React from 'react';
+import LactoseFreeIcon from '../assets/icons/restrictions/LactoseFreeIcon';
+import GlutenFreeIcon from '../assets/icons/restrictions/GlutenFreeIcon';
+import SugarFreeIcon from '../assets/icons/restrictions/SugarFreeIcon';
+import VeganIcon from '../assets/icons/restrictions/VeganIcon';
+import { Restriction } from '../services/api';
+
 interface RestrictionChipProps {
-  children: React.ReactNode;
+  restriction: Restriction;
+  className?: string;
 }
 
-export default function RestrictionChip({ children }: RestrictionChipProps) {
+function renderRestrictionIcon(restriction: Restriction) {
+  const color = "var(--color-primary-500)";
+  switch (restriction) {
+    case "LACTOSE_FREE":
+      return <LactoseFreeIcon color={color} width={24} height={24}/>;
+    case "GLUTEN_FREE":
+      return <GlutenFreeIcon color={color} width={24} height={24}/>;
+    case "SUGAR_FREE":
+      return <SugarFreeIcon color={color} width={24} height={24}/>;
+    case "VEGAN":
+      return <VeganIcon color={color} width={24} height={24}/>;
+    default:
+      return null;
+  }
+}
+
+function getRestrictionLabel(restriction: Restriction): string {
+  switch (restriction) {
+    case "LACTOSE_FREE":
+      return "Sin lactosa";
+    case "GLUTEN_FREE":
+      return "Sin gluten";
+    case "SUGAR_FREE":
+      return "Sin azúcar";
+    case "VEGAN":
+      return "Vegano";
+    default:
+      return restriction;
+  }
+}
+
+export default function RestrictionChip({ 
+  restriction, 
+  className = "" 
+}: RestrictionChipProps) {
   return (
     <div
-      className="w-6 h-6 rounded-full flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(13, 71, 161, 0.10)' }}
+      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full ${className}`}
+      style={{
+        backgroundColor: 'rgba(13, 71, 161, 0.1)',
+        color: 'var(--color-primary-500)'
+      }}
     >
-      {children}
+      {renderRestrictionIcon(restriction) && (
+        <div 
+          className="flex-shrink-0" 
+          aria-hidden="true"
+        >
+          {renderRestrictionIcon(restriction)}
+        </div>
+      )}
+      <span className="text-body2" style={{ color: 'var(--color-primary-500)' }}>
+        {getRestrictionLabel(restriction)}
+      </span>
     </div>
   );
 }

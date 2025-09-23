@@ -1,5 +1,5 @@
 import QuantityControl from "./QuantityControl";
-import RestrictionChip from "./RestrictionChip";
+import SmallRestrictionChip from "./SmallRestrictionChip";
 import PlusIcon from "../assets/icons/PlusIcon";
 import LactoseFreeIcon from "../assets/icons/restrictions/LactoseFreeIcon";
 import GlutenFreeIcon from "../assets/icons/restrictions/GlutenFreeIcon";
@@ -66,7 +66,7 @@ export default function ProductCard({
 
           <div className="flex items-center gap-2 mt-2">
             {restrictions.map((r, idx) => (
-              <RestrictionChip key={idx}>{renderRestrictionIcon(r)}</RestrictionChip>
+              <SmallRestrictionChip key={idx}>{renderRestrictionIcon(r)}</SmallRestrictionChip>
             ))}
           </div>
         </div>

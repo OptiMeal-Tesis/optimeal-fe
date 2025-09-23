@@ -1,10 +1,12 @@
 interface SugarFreeIconProps {
+  width?: number;
+  height?: number;
   color?: string;
 }
 
-export default function SugarFreeIcon({ color = "var(--color-primary-500)" }: SugarFreeIconProps) {
+export default function SugarFreeIcon({ width = 16, height = 16, color = "var(--color-primary-500)" }: SugarFreeIconProps) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0)">
         <path d="M6.66666 6.66669V11.9334" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M7.86801 4.09669C8.42528 3.95906 9.00864 3.96766 9.5616 4.12167C10.1146 4.27568 10.6184 4.56988 11.0243 4.97576C11.4302 5.38165 11.7243 5.88547 11.8784 6.43843C12.0324 6.99139 12.041 7.57475 11.9033 8.13202" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>

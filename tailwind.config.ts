@@ -55,37 +55,7 @@ const config: Config = {
     },
   },
 
-  plugins: [
-    plugin(({ addComponents, theme }) => {
-      const lh = theme("lineHeight.110") as string;
-
-      const sizes: Record<string, number> = {
-        h1: 36,
-        h2: 28,
-        h3: 24,
-        sub1: 20,
-        body1: 16,
-        body2: 14,
-        label: 12,
-      };
-
-      const classes: Record<string, any> = {};
-      Object.entries(sizes).forEach(([name, px]) => {
-        classes[`.text-${name}`] = {
-          fontSize: `${px}px`,
-          lineHeight: lh,
-          fontWeight: 400,
-        };
-        classes[`.text-${name}-bold`] = {
-          fontSize: `${px}px`,
-          lineHeight: lh,
-          fontWeight: 700,
-        };
-      });
-
-      addComponents(classes);
-    }),
-  ],
+  plugins: [],
 };
 
 export default config;

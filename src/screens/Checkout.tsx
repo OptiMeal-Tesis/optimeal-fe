@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useCart } from "../cart";
 import PageHeader from "../components/PageHeader";
-import SummaryCard from "../components/SummaryCard";
+import SummaryItemCard from "../components/SummaryCard";
 import CheckoutSummary from "../components/CheckoutSummary";
 import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 
-export default function CheckoutPage() {
+export default function Checkout() {
   const cart = useCart();
   const navigate = useNavigate();
   const cartItems = Object.values(cart.items);
@@ -72,9 +72,8 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-5 pb-30">
-            
             {cartItems.map((item) => (
-              <SummaryCard
+              <SummaryItemCard
                 key={item.productId}
                 productId={item.productId}
                 name={item.name}

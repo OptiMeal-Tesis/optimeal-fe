@@ -1,10 +1,12 @@
 interface VeganIconProps {
+  width?: number;
+  height?: number;
   color?: string;
 }
 
-export default function VegenIcon({ color = "var(--color-primary-500)" }: VeganIconProps) {
+export default function VeganIcon({ width = 16, height = 16, color = "var(--color-primary-500)" }: VeganIconProps) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0)">
         <path d="M10.6667 5.33331C13.3333 5.33331 14.6667 3.99998 14.6667 1.33331C12 1.33331 10.6667 2.66665 10.6667 5.33331Z" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M11.6067 2.39336C10.2232 1.50341 8.55957 1.15635 6.93569 1.41894C5.3118 1.68153 3.84234 2.53522 2.80988 3.81584C1.77742 5.09646 1.25488 6.71358 1.34274 8.35621C1.43061 9.99884 2.12267 11.551 3.28585 12.7142C4.44902 13.8773 6.00118 14.5694 7.6438 14.6573C9.28643 14.7451 10.9036 14.2226 12.1842 13.1901C13.4648 12.1577 14.3185 10.6882 14.5811 9.06433C14.8437 7.44044 14.4966 5.77681 13.6067 4.39336" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>

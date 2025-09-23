@@ -33,6 +33,15 @@ export interface RegisterResponse extends AuthResponse {
     };
 }
 
+// Product and cart related types
+export type Restriction =
+  | "GLUTEN_FREE"
+  | "LACTOSE_FREE"
+  | "SUGAR_FREE"
+  | "VEGAN";
+
+export type ProductType = "FOOD" | "BEVERAGE" | string;
+
 export interface Side {
     id: string;
     name: string;
@@ -45,7 +54,7 @@ export interface Product {
     description: string;
     price: number;
     photo?: string;
-    restrictions: string[];
+    restrictions: Restriction[];
     sides: Side[];
     admitsClarifications: boolean;
     type: string;
@@ -54,10 +63,24 @@ export interface Product {
     updatedAt: string;
 }
 
+// Cart-specific types that extend the base types
+export interface CartItem {
+  productId: string; // Changed to string to match API
+  quantity: number;
+  selectedSideId?: string | null; // Changed to string to match API
+  clarifications?: string | null;
+}
+
 export interface ProductsResponse {
     success: boolean;
     message: string;
     data: Product[];
+}
+
+export interface ProductResponse {
+    success: boolean;
+    message: string;
+    data: Product;
 }
 
 // Generic API interfaces
@@ -143,6 +166,28 @@ class ApiService {
             method: 'GET',
         });
     }
+
+    async getProductById(id: string): Promise<ProductResponse> {
+        return this.request<ProductResponse>(`/products/${id}`, {
+            method: 'GET',
+        });
+    }
 }
 
 export const apiService = new ApiService();
+
+
+export function mapRestrictionToChip(restriction: Restriction) {
+  const restrictionLabels: Record<Restriction, string> = {
+    GLUTEN_FREE: "Sin TACC",
+    LACTOSE_FREE: "Sin lactosa", 
+    SUGAR_FREE: "Sin azúcar",
+    VEGAN: "Vegano",
+  };
+
+  return {
+    id: restriction,
+    label: restrictionLabels[restriction] || restriction,
+    icon: undefined // Will be set by component
+  };
+}

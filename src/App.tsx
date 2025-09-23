@@ -5,11 +5,13 @@ import SuccessScreen from "./screens/SuccessScreen";
 import Home from "./screens/Home";
 import Orders from "./screens/Orders";
 import EditProfile from "./screens/EditProfile";
-import CheckoutPage from "./screens/CheckoutPage";
+import Checkout from "./screens/Checkout";
+import CheckoutEditItemPage from "./screens/EditItem";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { CartProvider } from "./cart";
 import { BrowserRouter as Router, Navigate,Route, Routes } from "react-router-dom";
+import EditItem from "./screens/EditItem";
 
 
 function App() {
@@ -53,7 +55,12 @@ function App() {
           } />
           <Route path="/checkout" element={
             <PrivateRoute>
-              <CheckoutPage />
+              <Checkout />
+            </PrivateRoute>
+          } />
+          <Route path="/checkout/edit/:productId" element={
+            <PrivateRoute>
+              <EditItem />
             </PrivateRoute>
           } />
           

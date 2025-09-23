@@ -1,10 +1,12 @@
 interface GlutenFreeIconProps {
+  width?: number;
+  height?: number;
   color?: string;
 }
 
-export default function GlutenFreeIcon({ color = "var(--color-primary-500)" }: GlutenFreeIconProps) {
+export default function GlutenFreeIcon({ width = 16, height = 16, color = "var(--color-primary-500)" }: GlutenFreeIconProps) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0)">
         <path d="M1.33334 14.6667L8.00001 8" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M10.6667 5.33331L9.88666 6.11331" stroke={color} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
