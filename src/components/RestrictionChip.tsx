@@ -47,21 +47,20 @@ export default function RestrictionChip({
 }: RestrictionChipProps) {
   return (
     <div
-      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full ${className}`}
+      className={`flex flex-row items-center w-32 justify-center gap-2 px-3 py-2 rounded-full ${className}`}
       style={{
         backgroundColor: 'rgba(13, 71, 161, 0.1)',
         color: 'var(--color-primary-500)'
       }}
     >
       {renderRestrictionIcon(restriction) && (
-        <div 
-          className="flex-shrink-0" 
+        <div
           aria-hidden="true"
         >
           {renderRestrictionIcon(restriction)}
         </div>
       )}
-      <span className="text-body2" style={{ color: 'var(--color-primary-500)' }}>
+      <span className="text-body2 whitespace-nowrap" style={{ color: 'var(--color-primary-500)' }}>
         {getRestrictionLabel(restriction)}
       </span>
     </div>

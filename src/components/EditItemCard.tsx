@@ -180,7 +180,7 @@ export default function EditItemCard({
         {/* Restriction Chips */}
         {restrictions.length > 0 && (
           <Box sx={{ mb: 2 }}>
-            <div className="w-full flex flex-wrap items-center justify-center gap-3">
+            <div className="w-full flex items-center gap-3 overflow-x-auto scrollbar-hide">
               {restrictions.map((restriction) => (
                 <RestrictionChip 
                   key={restriction} 
