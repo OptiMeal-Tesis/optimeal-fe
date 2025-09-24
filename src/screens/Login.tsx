@@ -98,7 +98,7 @@ export default function Login() {
               helperText={errors.password || apiError}
             />
 
-            <CustomButton type="submit" fullWidth disabled={isLoading}>
+            <CustomButton type="submit" fullWidth disabled={isLoading} className="text-body1 py-2">
               {isLoading ? 'Iniciando sesión...' : 'Iniciar'}
             </CustomButton>
         </form>

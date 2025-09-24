@@ -115,15 +115,15 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center p-8">
-      <div className="w-full flex flex-col gap-8 text-center">
+    <div className="min-h-screen flex items-center p-7">
+      <div className="w-full flex flex-col gap-4 text-center">
         <div className="flex justify-center">
           <Logo width={222} height={74}/>
         </div>
 
         <p className="text-sub1">Crear Cuenta</p>
 
-        <form className="w-full flex flex-col gap-7" onSubmit={onSubmit} noValidate>
+        <form className="w-full flex flex-col gap-6" onSubmit={onSubmit} noValidate>
           {apiError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {apiError}

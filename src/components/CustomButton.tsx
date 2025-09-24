@@ -25,13 +25,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       sx={{
         borderRadius: '12px',
         textTransform: 'none',
-        fontWeight: 700,
         minHeight: size === 'large' ? '34px' : size === 'medium' ? '24px' : '12px',
         '&.MuiButton-root': {
           fontFamily: 'inherit',
           fontSize: 'inherit',
           lineHeight: 'inherit',
-          padding: 'inherit',
           margin: 'inherit',
           width: 'inherit',
           height: 'inherit',
