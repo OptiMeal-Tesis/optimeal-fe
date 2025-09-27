@@ -7,12 +7,9 @@ import {
   FormControl,
   Select,
   MenuItem,
-  TextField,
   Box,
-  Chip as MuiChip,
+  Chip,
   InputLabel,
-  FormHelperText,
-  Divider
 } from '@mui/material';
 import RestrictionChip from './RestrictionChip';
 import QuantityControl from './QuantityControl';
@@ -34,6 +31,7 @@ export type EditItemCardProps = {
   admitsClarifications?: boolean;
   type?: "FOOD" | "BEVERAGE" | string;
   stock?: number;
+  isEditingExistingItem?: boolean; // New prop to indicate if editing existing item
   onEdit: (payload: {
     productId: string;
     quantity: number;
@@ -58,6 +56,7 @@ export default function EditItemCard({
   admitsClarifications = false,
   type = "FOOD",
   stock = 99,
+  isEditingExistingItem = false,
   onEdit,
   className = ""
 }: EditItemCardProps) {
@@ -67,10 +66,12 @@ export default function EditItemCard({
 
   // Reset state when props change
   useEffect(() => {
-    setQuantity(initialQuantity);
-    setSelectedSideId(initialSelectedSide);
-    setClarifications(initialClarifications);
-  }, [initialQuantity, initialSelectedSide, initialClarifications]);
+    if (!isEditingExistingItem) {
+      setQuantity(initialQuantity);
+      setSelectedSideId(initialSelectedSide);
+      setClarifications(initialClarifications);
+    }
+  }, [initialQuantity, initialSelectedSide, initialClarifications, isEditingExistingItem]);
 
   // Format price
   const peso = new Intl.NumberFormat("es-AR", { 
@@ -79,11 +80,21 @@ export default function EditItemCard({
     maximumFractionDigits: 0 
   });
 
+  // Check if there are any changes from initial values
+  const hasChanges = quantity !== initialQuantity || 
+    selectedSideId !== initialSelectedSide || 
+    clarifications !== initialClarifications;
+
   // Validation logic
   const hasActiveSides = sides.some(s => s.isActive);
   const sideIsRequired = type === "FOOD" && hasActiveSides;
   const isOutOfStock = stock === 0;
-  const isSaveDisabled = quantity < 1 || 
+  
+  // Save button should be disabled if:
+  // 1. No changes have been made, OR
+  // 2. Required side is missing, OR  
+  // 3. Product is out of stock
+  const isSaveDisabled = !hasChanges || 
     (sideIsRequired && !selectedSideId) || 
     isOutOfStock;
 
@@ -91,11 +102,13 @@ export default function EditItemCard({
   const handleQuantityIncrease = () => {
     if (quantity < 99 && !isOutOfStock) {
       setQuantity(prev => prev + 1);
+    } else if (isOutOfStock) {
+      return;
     }
   };
 
   const handleQuantityDecrease = () => {
-    if (quantity > 1) {
+    if (quantity > 0) {
       setQuantity(prev => prev - 1);
     }
   };
@@ -303,22 +316,34 @@ export default function EditItemCard({
       </CardContent>
 
       <CardActions sx={{width: '100%', padding: '16px'}}>
-        <CustomButton
-          onClick={handleSave}
-          variant='contained'
-          size='large'
-          disabled={isSaveDisabled}
-          className={`
-            w-full py-11 rounded-lg text-sub1-bold
-            ${isSaveDisabled
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-primary-500 text-white'
-            }
-          `}
-          aria-label="Guardar cambios"
-        >
-          Guardar cambios
-        </CustomButton>
+        <div className="w-full flex flex-col gap-4">
+          {/* Quantity Control */}
+          {/* <div className="flex items-center justify-between">
+            <span className="text-body1 text-gray-700">Cantidad:</span>
+            <QuantityControl
+              quantity={quantity}
+              onDecrease={handleQuantityDecrease}
+              onIncrease={handleQuantityIncrease}
+            />
+          </div> */}
+          
+          <CustomButton
+            onClick={handleSave}
+            variant='contained'
+            size='large'
+            disabled={isSaveDisabled}
+            className={`
+              w-full py-11 rounded-lg text-sub1-bold
+              ${isSaveDisabled
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-primary-500 text-white'
+              }
+            `}
+            aria-label={isEditingExistingItem ? "Guardar cambios" : "Agregar al carrito"}
+          >
+            {isEditingExistingItem ? "Guardar cambios" : "Agregar al carrito"}
+          </CustomButton>
+        </div>
       </CardActions>
     </Card>
   );

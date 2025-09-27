@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../cart';
+import { generateCartItemKey } from '../cart/cart';
 import PageHeader from '../components/PageHeader';
 import EditItemCard from '../components/EditItemCard';
 import { Product } from '../services/api';
@@ -16,7 +17,12 @@ interface LoadingState {
 export default function CheckoutEditItemPage() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const { items, updateItem, addItem } = useCart();
+  const location = useLocation();
+  const { items, updateItem, addItem, remove } = useCart();
+  
+  // Get itemKey from URL params
+  const searchParams = new URLSearchParams(location.search);
+  const itemKey = searchParams.get('itemKey');
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>({
@@ -24,8 +30,17 @@ export default function CheckoutEditItemPage() {
     error: null
   });
 
-  // Get current cart item if exists
-  const cartItem: CartItem | undefined = productId ? items[productId] : undefined;
+  // Simple logic: if itemKey exists, we're editing; if not, we're adding new
+  const isEditingExistingItem = !!itemKey;
+  const finalCartItem = itemKey ? items[itemKey] : undefined;
+  
+  console.log('EditItem debug:', {
+    productId,
+    itemKey,
+    isEditingExistingItem,
+    finalCartItem,
+    allItems: Object.keys(items)
+  });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -59,22 +74,31 @@ export default function CheckoutEditItemPage() {
   }) => {
     if (!product) return;
 
-    // Create cart item data
-    const cartItemData = {
-      productId: payload.productId.toString(),
-      quantity: payload.quantity,
-      price: product.price,
-      name: product.name,
-      photo: product.photo,
-      sides: product.sides,
-      selectedSide: payload.selectedSideId ? payload.selectedSideId.toString() : null,
-      clarifications: payload.clarifications
-    };
-
-    // Update or add item to cart
-    if (cartItem) {
-      updateItem(cartItemData);
+    if (payload.quantity === 0) {
+      // Remove item from cart if quantity is 0
+      if (itemKey) {
+        remove(itemKey);
+      }
     } else {
+      // Create cart item data
+      const cartItemData = {
+        productId: payload.productId.toString(),
+        quantity: payload.quantity,
+        price: product.price,
+        name: product.name,
+        photo: product.photo,
+        sides: product.sides,
+        selectedSide: payload.selectedSideId ? payload.selectedSideId.toString() : null,
+        clarifications: payload.clarifications,
+        stock: product.stock
+      };
+
+      if (isEditingExistingItem && itemKey) {
+        // If editing existing item, remove old and add new
+        remove(itemKey);
+      }
+      
+      // Add the new/updated item
       addItem(cartItemData);
     }
 
@@ -146,15 +170,16 @@ export default function CheckoutEditItemPage() {
           name={product.name}
           description={product.description}
           price={product.price}
-          quantity={cartItem?.quantity ?? 1}
+          quantity={finalCartItem?.quantity ?? 1}
           photo={product.photo}
           sides={product.sides}
           restrictions={product.restrictions}
-          clarifications={cartItem?.clarifications ?? ""}
-          selectedSide={cartItem?.selectedSide || null}
+          clarifications={finalCartItem?.clarifications ?? ""}
+          selectedSide={finalCartItem?.selectedSide || null}
           admitsClarifications={product.admitsClarifications}
           type={product.type}
           stock={product.stock}
+          isEditingExistingItem={isEditingExistingItem}
           onEdit={handleEdit}
         />
       </div>

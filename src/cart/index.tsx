@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Product, ProductId, CartState, CartItem, persistCart, readCart } from './cart';
+import { Product, ProductId, CartState, CartItem, persistCart, readCart, generateCartItemKey } from './cart';
 
 // Action types
 type Action =
   | { type: "ADD"; product: Product }
   | { type: "UPDATE_ITEM"; item: CartItem }
   | { type: "ADD_ITEM"; item: CartItem }
-  | { type: "INCREASE"; productId: ProductId }
-  | { type: "DECREASE"; productId: ProductId }
-  | { type: "REMOVE"; productId: ProductId }
+  | { type: "INCREASE"; itemKey: string }
+  | { type: "DECREASE"; itemKey: string }
+  | { type: "REMOVE"; itemKey: string }
   | { type: "CLEAR" };
 
 
@@ -16,10 +16,13 @@ type Action =
   add: (product: Product) => void;
   updateItem: (item: CartItem) => void;
   addItem: (item: CartItem) => void;
-  increase: (productId: ProductId) => void;
-  decrease: (productId: ProductId) => void;
-  remove: (productId: ProductId) => void;
+  increase: (itemKey: string) => void;
+  decrease: (itemKey: string) => void;
+  remove: (itemKey: string) => void;
   clear: () => void;
+  // Helper functions
+  getItemsByProductId: (productId: ProductId) => CartItem[];
+  getTotalQuantityByProductId: (productId: ProductId) => number;
 };
 
 // Cart API interface
@@ -37,7 +40,8 @@ const cartReducer = (state: CartState, action: Action): CartState => {
   switch (action.type) {
     case "ADD": {
       const { product } = action;
-      const existingItem = state.items[product.id];
+      const itemKey = generateCartItemKey(product.id, null);
+      const existingItem = state.items[itemKey];
       
       if (existingItem) {
         // Increase quantity if product already exists
@@ -45,7 +49,7 @@ const cartReducer = (state: CartState, action: Action): CartState => {
           ...state,
           items: {
             ...state.items,
-            [product.id]: {
+            [itemKey]: {
               ...existingItem,
               quantity: existingItem.quantity + 1,
             },
@@ -57,7 +61,7 @@ const cartReducer = (state: CartState, action: Action): CartState => {
           ...state,
           items: {
             ...state.items,
-            [product.id]: {
+            [itemKey]: {
               productId: product.id,
               quantity: 1,
               price: product.price,
@@ -74,11 +78,12 @@ const cartReducer = (state: CartState, action: Action): CartState => {
 
     case "UPDATE_ITEM": {
       const { item } = action;
+      const itemKey = generateCartItemKey(item.productId, item.selectedSide);
       newState = {
         ...state,
         items: {
           ...state.items,
-          [item.productId]: item,
+          [itemKey]: item,
         },
       };
       break;
@@ -86,26 +91,27 @@ const cartReducer = (state: CartState, action: Action): CartState => {
 
     case "ADD_ITEM": {
       const { item } = action;
+      const itemKey = generateCartItemKey(item.productId, item.selectedSide);
       newState = {
         ...state,
         items: {
           ...state.items,
-          [item.productId]: item,
+          [itemKey]: item,
         },
       };
       break;
     }
 
     case "INCREASE": {
-      const { productId } = action;
-      const item = state.items[productId];
+      const { itemKey } = action;
+      const item = state.items[itemKey];
       
       if (item) {
         newState = {
           ...state,
           items: {
             ...state.items,
-            [productId]: {
+            [itemKey]: {
               ...item,
               quantity: item.quantity + 1,
             },
@@ -118,13 +124,13 @@ const cartReducer = (state: CartState, action: Action): CartState => {
     }
 
     case "DECREASE": {
-      const { productId } = action;
-      const item = state.items[productId];
+      const { itemKey } = action;
+      const item = state.items[itemKey];
       
       if (item) {
         if (item.quantity <= 1) {
           // Remove item when quantity reaches 0
-          const { [productId]: removed, ...remainingItems } = state.items;
+          const { [itemKey]: removed, ...remainingItems } = state.items;
           newState = {
             ...state,
             items: remainingItems,
@@ -135,7 +141,7 @@ const cartReducer = (state: CartState, action: Action): CartState => {
             ...state,
             items: {
               ...state.items,
-              [productId]: {
+              [itemKey]: {
                 ...item,
                 quantity: item.quantity - 1,
               },
@@ -149,8 +155,8 @@ const cartReducer = (state: CartState, action: Action): CartState => {
     }
 
     case "REMOVE": {
-      const { productId } = action;
-      const { [productId]: removed, ...remainingItems } = state.items;
+      const { itemKey } = action;
+      const { [itemKey]: removed, ...remainingItems } = state.items;
       newState = {
         ...state,
         items: remainingItems,
@@ -191,25 +197,10 @@ export function CartProvider({ children }: CartProviderProps) {
       const subtotal = calculateSubtotal(savedCart.items);
       dispatch({ type: "CLEAR" });
       Object.values(savedCart.items).forEach(item => {
-        for (let i = 0; i < item.quantity; i++) {
-          dispatch({
-            type: "ADD",
-            product: {
-              id: item.productId,
-              name: item.name,
-              description: "",
-              price: item.price,
-              photo: item.photo,
-              restrictions: [],
-              sides: item.sides || [],
-              admitsClarifications: false,
-              type: "",
-              stock: 0,
-              createdAt: "",
-              updatedAt: "",
-            },
-          });
-        }
+        dispatch({
+          type: "ADD_ITEM",
+          item: item,
+        });
       });
     }
   }, []);
@@ -219,15 +210,26 @@ export function CartProvider({ children }: CartProviderProps) {
     persistCart(state);
   }, [state]);
 
+  // Helper functions
+  const getItemsByProductId = (productId: ProductId): CartItem[] => {
+    return Object.values(state.items).filter(item => item.productId === productId);
+  };
+
+  const getTotalQuantityByProductId = (productId: ProductId): number => {
+    return getItemsByProductId(productId).reduce((total, item) => total + item.quantity, 0);
+  };
+
   // Cart actions
   const actions: CartActions = {
     add: (product: Product) => dispatch({ type: "ADD", product }),
     updateItem: (item: CartItem) => dispatch({ type: "UPDATE_ITEM", item }),
     addItem: (item: CartItem) => dispatch({ type: "ADD_ITEM", item }),
-    increase: (productId: ProductId) => dispatch({ type: "INCREASE", productId }),
-    decrease: (productId: ProductId) => dispatch({ type: "DECREASE", productId }),
-    remove: (productId: ProductId) => dispatch({ type: "REMOVE", productId }),
+    increase: (itemKey: string) => dispatch({ type: "INCREASE", itemKey }),
+    decrease: (itemKey: string) => dispatch({ type: "DECREASE", itemKey }),
+    remove: (itemKey: string) => dispatch({ type: "REMOVE", itemKey }),
     clear: () => dispatch({ type: "CLEAR" }),
+    getItemsByProductId,
+    getTotalQuantityByProductId,
   };
 
   const cartApi: CartApi = {

@@ -1,4 +1,3 @@
-import React from 'react';
 import LactoseFreeIcon from '../assets/icons/restrictions/LactoseFreeIcon';
 import GlutenFreeIcon from '../assets/icons/restrictions/GlutenFreeIcon';
 import SugarFreeIcon from '../assets/icons/restrictions/SugarFreeIcon';

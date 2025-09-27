@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // Permite acceso desde otros dispositivos
+    host: true,
     port: 5173,
+    allowedHosts: [
+      "municipally-nondiagrammatic-ryder.ngrok-free.dev"
+    ]
   }
 })

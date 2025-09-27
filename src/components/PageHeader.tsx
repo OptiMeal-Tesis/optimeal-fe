@@ -4,13 +4,18 @@ import BackArrowIcon from "../assets/icons/BackArrowIcon";
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
+  onNavigate?: () => void;
 }
 
-export default function PageHeader({ title, subtitle }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle, onNavigate }: PageHeaderProps) {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1);
+    if (onNavigate) {
+      onNavigate();
+    } else {
+      navigate(-1);
+    }
   };
 
   return (
