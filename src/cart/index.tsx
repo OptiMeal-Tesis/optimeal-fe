@@ -44,17 +44,23 @@ const cartReducer = (state: CartState, action: Action): CartState => {
       const existingItem = state.items[itemKey];
       
       if (existingItem) {
-        // Increase quantity if product already exists
-        newState = {
-          ...state,
-          items: {
-            ...state.items,
-            [itemKey]: {
-              ...existingItem,
-              quantity: existingItem.quantity + 1,
+        // Check stock before increasing quantity
+        if (existingItem.quantity >= existingItem.stock) {
+          // Don't allow increase if it would exceed stock
+          newState = state;
+        } else {
+          // Increase quantity if product already exists
+          newState = {
+            ...state,
+            items: {
+              ...state.items,
+              [itemKey]: {
+                ...existingItem,
+                quantity: existingItem.quantity + 1,
+              },
             },
-          },
-        };
+          };
+        }
       } else {
         // Add new item
         newState = {
@@ -69,6 +75,7 @@ const cartReducer = (state: CartState, action: Action): CartState => {
               photo: product.photo,
               sides: product.sides || [],
               selectedSide: null,
+              stock: product.stock,
             },
           },
         };
@@ -107,16 +114,22 @@ const cartReducer = (state: CartState, action: Action): CartState => {
       const item = state.items[itemKey];
       
       if (item) {
-        newState = {
-          ...state,
-          items: {
-            ...state.items,
-            [itemKey]: {
-              ...item,
-              quantity: item.quantity + 1,
+        // Check stock before increasing quantity
+        if (item.quantity >= item.stock) {
+          // Don't allow increase if it would exceed stock
+          newState = state;
+        } else {
+          newState = {
+            ...state,
+            items: {
+              ...state.items,
+              [itemKey]: {
+                ...item,
+                quantity: item.quantity + 1,
+              },
             },
-          },
-        };
+          };
+        }
       } else {
         newState = state;
       }

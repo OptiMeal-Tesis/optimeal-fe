@@ -100,7 +100,7 @@ export default function EditItemCard({
 
   // Handle quantity changes
   const handleQuantityIncrease = () => {
-    if (quantity < 99 && !isOutOfStock) {
+    if (quantity < 99 && !isOutOfStock && quantity < (stock || 0)) {
       setQuantity(prev => prev + 1);
     } else if (isOutOfStock) {
       return;
@@ -318,14 +318,15 @@ export default function EditItemCard({
       <CardActions sx={{width: '100%', padding: '16px'}}>
         <div className="w-full flex flex-col gap-4">
           {/* Quantity Control */}
-          {/* <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <span className="text-body1 text-gray-700">Cantidad:</span>
             <QuantityControl
               quantity={quantity}
               onDecrease={handleQuantityDecrease}
               onIncrease={handleQuantityIncrease}
+              disabled={stock === 0}
             />
-          </div> */}
+          </div>
           
           <CustomButton
             onClick={handleSave}

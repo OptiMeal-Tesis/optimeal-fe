@@ -84,12 +84,6 @@ export default function Home() {
                 const hasActiveSides = product.sides && product.sides.some(s => s.isActive);
                 
                 const handleAdd = () => {
-                  // Check if product is out of stock
-                  if (product.stock === 0) {
-                    alert('Este producto está fuera de stock');
-                    return;
-                  }
-                  
                   if (hasActiveSides) {
                     // Redirect to edit page for items with sides
                     navigate(`/checkout/edit/${product.id}`);
@@ -100,12 +94,6 @@ export default function Home() {
                 };
 
                 const handleIncrease = () => {
-                  // Check if product is out of stock
-                  if (product.stock === 0) {
-                    alert('Este producto está fuera de stock');
-                    return;
-                  }
-                  
                   if (hasActiveSides) {
                     // Redirect to edit page for items with sides
                     navigate(`/checkout/edit/${product.id}`);
@@ -142,6 +130,7 @@ export default function Home() {
                     restrictions={product.restrictions as Restriction[]}
                     variant={totalQuantity > 0 ? "active" : "default"}
                     quantity={totalQuantity}
+                    stock={product.stock}
                     onAdd={handleAdd}
                     onIncrease={handleIncrease}
                     onDecrease={handleDecrease}

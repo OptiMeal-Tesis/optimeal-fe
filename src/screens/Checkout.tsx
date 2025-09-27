@@ -100,23 +100,17 @@ export default function Checkout() {
               const itemKey = generateCartItemKey(item.productId, item.selectedSide);
               const isOutOfStock = item.stock === 0;
               const canIncrease = item.stock > item.quantity;
+              const isConsumingLastStock = item.stock === item.quantity && item.stock > 0;
               
               return (
                 <div key={itemKey}>
-                  {isOutOfStock && (
+                  {isConsumingLastStock && (
                     <div className="bg-red-50 border border-error rounded-lg p-3 mb-2">
                       <p className="text-error text-sm font-medium text-center">
-                        Este producto está fuera de stock
+                        No hay más stock disponible para este producto
                       </p>
                     </div>
                   )}
-                    {!isOutOfStock && !canIncrease && (
-                      <div className="bg-red-50 border border-error rounded-lg p-3 mb-2">
-                        <p className="text-error text-sm font-medium text-center">
-                          No hay más stock disponible para este producto
-                        </p>
-                      </div>
-                    )}
                   <SummaryItemCard
                     productId={item.productId}
                     name={item.name}

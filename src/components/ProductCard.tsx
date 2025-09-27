@@ -16,6 +16,7 @@ export interface ProductCardProps {
   restrictions: Restriction[];
   variant?: "default" | "active" | "summary";
   quantity?: number;
+  stock?: number;
   onIncrease?: () => void;
   onDecrease?: () => void;
   onAdd?: () => void;
@@ -45,11 +46,13 @@ export default function ProductCard({
   restrictions,
   variant = "default",
   quantity = 0,
+  stock = 0,
   onIncrease,
   onDecrease,
   onAdd,
 }: ProductCardProps) {
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+  const isOutOfStock = stock === 0;
 
   return (
     <div className="w-full flex gap-1.5 rounded-xl">
@@ -77,16 +80,22 @@ export default function ProductCard({
           {variant === "default" && (
             <button
               type="button"
-              onClick={onAdd}
-              className="flex items-center justify-center"
+              onClick={isOutOfStock ? undefined : onAdd}
+              disabled={isOutOfStock}
+              className={`flex items-center justify-center ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Agregar"
             >
-              <PlusIcon width={32} height={32} color="var(--color-primary-500)" />
+              <PlusIcon width={32} height={32} color={isOutOfStock ? "#9CA3AF" : "var(--color-primary-500)"} />
             </button>
           )}
 
           {variant === "active" && (
-            <QuantityControl quantity={quantity} onDecrease={onDecrease!} onIncrease={onIncrease!} />
+            <QuantityControl 
+              quantity={quantity} 
+              onDecrease={onDecrease!} 
+              onIncrease={onIncrease!} 
+              disabled={isOutOfStock}
+            />
           )}
 
           {variant === "summary" && (
