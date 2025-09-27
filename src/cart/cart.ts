@@ -26,10 +26,19 @@ export interface CartItem {
   sides: Side[];
   selectedSide?: string | null;
   clarifications?: string | null;
+  stock: number;
 }
 
+// Generate unique key for cart items based on productId + selectedSide
+export const generateCartItemKey = (productId: ProductId, selectedSide?: string | null): string => {
+  if (!selectedSide) {
+    return productId;
+  }
+  return `${productId}_${selectedSide}`;
+};
+
 export interface CartState {
-  items: Record<ProductId, CartItem>;
+  items: Record<string, CartItem>; // Changed from ProductId to string for unique keys
   subtotal: number; // derived: sum(price * quantity)
 }
 

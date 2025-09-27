@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useCart } from "../cart";
+import { generateCartItemKey } from "../cart/cart";
 import PageHeader from "../components/PageHeader";
 import SummaryItemCard from "../components/SummaryCard";
 import CheckoutSummary from "../components/CheckoutSummary";
@@ -12,27 +13,50 @@ export default function Checkout() {
   const cartItems = Object.values(cart.items);
   const [pickupTime, setPickupTime] = useState("13:00");
 
-  const handleQuantityChange = (productId: string, newQuantity: number) => {
+  const handleQuantityChange = (itemKey: string, newQuantity: number) => {
+    const item = cart.items[itemKey];
+    if (!item) return;
+
+    // Check stock before allowing increase
+    if (newQuantity > item.quantity) {
+      const difference = newQuantity - item.quantity;
+      if (item.stock < item.quantity + difference) {
+        // Don't allow increase if it would exceed stock
+        return;
+      }
+    }
+
     if (newQuantity === 0) {
-      cart.remove(productId);
+      cart.remove(itemKey);
     } else {
-      const currentQuantity = cart.items[productId]?.quantity || 0;
+      const currentQuantity = cart.items[itemKey]?.quantity || 0;
       const difference = newQuantity - currentQuantity;
       
       if (difference > 0) {
         for (let i = 0; i < difference; i++) {
-          cart.increase(productId);
+          cart.increase(itemKey);
         }
       } else if (difference < 0) {
         for (let i = 0; i < Math.abs(difference); i++) {
-          cart.decrease(productId);
+          cart.decrease(itemKey);
         }
       }
     }
   };
 
   const handleEdit = (productId: string) => {
-    navigate(`/checkout/edit/${productId}`);
+    // Find the specific item being edited to get its exact details
+    const itemToEdit = cartItems.find(item => item.productId === productId);
+    if (itemToEdit) {
+      // Don't allow editing if product is out of stock
+      if (itemToEdit.stock === 0) {
+        alert('Este producto está fuera de stock. Solo puedes eliminarlo del carrito.');
+        return;
+      }
+      
+      const itemKey = generateCartItemKey(itemToEdit.productId, itemToEdit.selectedSide);
+      navigate(`/checkout/edit/${productId}?itemKey=${itemKey}`);
+    }
   };
 
   const validateRequiredSides = (): boolean => {
@@ -63,7 +87,7 @@ export default function Checkout() {
 
   return (
     <div className="h-screen bg-white flex flex-col">
-      <PageHeader title="Tu Pedido" subtitle={formatDate(new Date())}/>
+      <PageHeader title="Tu Pedido" subtitle={formatDate(new Date())} onNavigate={() => navigate('/home')} />
       
       <div className="px-4 overflow-y-auto py-5 pb-24">
         {cartItems.length === 0 ? (
@@ -72,20 +96,36 @@ export default function Checkout() {
           </div>
         ) : (
           <div className="flex flex-col gap-5 pb-30">
-            {cartItems.map((item) => (
-              <SummaryItemCard
-                key={item.productId}
-                productId={item.productId}
-                name={item.name}
-                price={item.price}
-                quantity={item.quantity}
-                photo={item.photo}
-                sides={item.sides}
-                selectedSide={item.selectedSide}
-                onQuantityChange={handleQuantityChange}
-                onEdit={handleEdit}
-              />
-            ))}
+            {cartItems.map((item) => {
+              const itemKey = generateCartItemKey(item.productId, item.selectedSide);
+              const isOutOfStock = item.stock === 0;
+              const canIncrease = item.stock > item.quantity;
+              const isConsumingLastStock = item.stock === item.quantity && item.stock > 0;
+              
+              return (
+                <div key={itemKey}>
+                  {isConsumingLastStock && (
+                    <div className="bg-red-50 border border-error rounded-lg p-3 mb-2">
+                      <p className="text-error text-sm font-medium text-center">
+                        No hay más stock disponible para este producto
+                      </p>
+                    </div>
+                  )}
+                  <SummaryItemCard
+                    productId={item.productId}
+                    name={item.name}
+                    price={item.price}
+                    quantity={item.quantity}
+                    photo={item.photo}
+                    sides={item.sides}
+                    selectedSide={item.selectedSide}
+                    itemKey={itemKey}
+                    onQuantityChange={handleQuantityChange}
+                    onEdit={handleEdit}
+                  />
+                </div>
+              );
+            })}
             
           </div>
         )}

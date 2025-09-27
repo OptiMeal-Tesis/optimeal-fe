@@ -6,6 +6,7 @@ import ProductCard, { type Restriction } from "../components/ProductCard";
 import SubtotalButton from "../components/SubtotalButton";
 import { apiService } from "../services/api";
 import { useCart } from "../cart";
+import { generateCartItemKey } from "../cart/cart";
 import type { Product } from "../services/api";
 
 export default function Home() {
@@ -79,7 +80,46 @@ export default function Home() {
           {!loading && !error && products.length > 0 && (
             <div className="flex flex-col gap-6 pb-24">
               {products.map((product) => {
-                const quantity = cart.items[product.id]?.quantity ?? 0;
+                const totalQuantity = cart.getTotalQuantityByProductId(product.id);
+                const hasActiveSides = product.sides && product.sides.some(s => s.isActive);
+                
+                const handleAdd = () => {
+                  if (hasActiveSides) {
+                    // Redirect to edit page for items with sides
+                    navigate(`/checkout/edit/${product.id}`);
+                  } else {
+                    // Add directly to cart for items without sides
+                    cart.add(product);
+                  }
+                };
+
+                const handleIncrease = () => {
+                  if (hasActiveSides) {
+                    // Redirect to edit page for items with sides
+                    navigate(`/checkout/edit/${product.id}`);
+                  } else {
+                    // Find the item without sides and increase quantity
+                    const itemWithoutSides = Object.values(cart.items).find(
+                      item => item.productId === product.id && !item.selectedSide
+                    );
+                    if (itemWithoutSides) {
+                      const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
+                      cart.increase(itemKey);
+                    }
+                  }
+                };
+
+                const handleDecrease = () => {
+                  // Find the item without sides and decrease quantity
+                  const itemWithoutSides = Object.values(cart.items).find(
+                    item => item.productId === product.id && !item.selectedSide
+                  );
+                  if (itemWithoutSides) {
+                    const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
+                    cart.decrease(itemKey);
+                  }
+                };
+
                 return (
                   <ProductCard
                     key={product.id}
@@ -88,11 +128,12 @@ export default function Home() {
                     price={product.price}
                     photo={product.photo}
                     restrictions={product.restrictions as Restriction[]}
-                    variant={quantity > 0 ? "active" : "default"}
-                    quantity={quantity}
-                    onAdd={() => cart.add(product)}
-                    onIncrease={() => cart.increase(product.id)}
-                    onDecrease={() => cart.decrease(product.id)}
+                    variant={totalQuantity > 0 ? "active" : "default"}
+                    quantity={totalQuantity}
+                    stock={product.stock}
+                    onAdd={handleAdd}
+                    onIncrease={handleIncrease}
+                    onDecrease={handleDecrease}
                   />
                 );
               })}
