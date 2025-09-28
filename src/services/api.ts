@@ -71,6 +71,29 @@ export interface CartItem {
   clarifications?: string | null;
 }
 
+// Checkout types for Mercado Pago integration
+export interface CheckoutItem {
+  productId: number;
+  quantity: number;
+  sideId?: number;
+  notes?: string;
+}
+
+export interface CheckoutRequest {
+  items: CheckoutItem[];
+  pickUpTime: string; // ISO datetime string
+}
+
+export interface CheckoutResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    checkoutId: number;
+    initPoint: string;
+    preferenceId: string;
+  };
+}
+
 export interface ProductsResponse {
     success: boolean;
     message: string;
@@ -170,6 +193,13 @@ class ApiService {
     async getProductById(id: string): Promise<ProductResponse> {
         return this.request<ProductResponse>(`/products/${id}`, {
             method: 'GET',
+        });
+    }
+
+    async createCheckout(checkoutData: CheckoutRequest): Promise<CheckoutResponse> {
+        return this.request<CheckoutResponse>('/payments/checkout', {
+            method: 'POST',
+            body: JSON.stringify(checkoutData),
         });
     }
 }

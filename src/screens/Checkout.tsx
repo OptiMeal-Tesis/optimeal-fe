@@ -6,12 +6,14 @@ import SummaryItemCard from "../components/SummaryCard";
 import CheckoutSummary from "../components/CheckoutSummary";
 import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
+import { apiService, CheckoutRequest } from "../services/api";
 
 export default function Checkout() {
   const cart = useCart();
   const navigate = useNavigate();
   const cartItems = Object.values(cart.items);
   const [pickupTime, setPickupTime] = useState("13:00");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const handleQuantityChange = (itemKey: string, newQuantity: number) => {
     const item = cart.items[itemKey];
@@ -81,8 +83,49 @@ export default function Checkout() {
     return validateRequiredSides() && isTimeValid;
   };
 
-  const handleCheckout = () => {
-    navigate('/checkout/payment');
+  const transformCartToCheckoutRequest = (): CheckoutRequest => {
+    const items = cartItems.map(item => ({
+      productId: parseInt(item.productId),
+      quantity: item.quantity,
+      sideId: item.selectedSide ? parseInt(item.selectedSide) : undefined,
+      notes: item.clarifications || undefined,
+    }));
+
+    // Create ISO datetime string for pickup time
+    const today = new Date();
+    const [hours, minutes] = pickupTime.split(':').map(Number);
+    const pickupDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+    const pickupTimeISO = pickupDateTime.toISOString();
+
+    return {
+      items,
+      pickUpTime: pickupTimeISO,
+    };
+  };
+
+  const handleCheckout = async () => {
+    if (!isCheckoutValid()) {
+      return;
+    }
+
+    setIsProcessingPayment(true);
+    
+    try {
+      const checkoutRequest = transformCartToCheckoutRequest();
+      const response = await apiService.createCheckout(checkoutRequest);
+      
+      if (response.success && response.data?.initPoint) {
+        // Redirect to Mercado Pago payment page
+        window.location.href = response.data.initPoint;
+      } else {
+        alert(response.message || 'Error al procesar el pago');
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('Error al procesar el pago. Por favor, intenta nuevamente.');
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   return (
@@ -134,11 +177,12 @@ export default function Checkout() {
       {cartItems.length > 0 && (
         <CheckoutSummary
           subtotal={cart.subtotal}
-          isDisabled={cart.subtotal === 0 || (!isCheckoutValid())}
+          isDisabled={cart.subtotal === 0 || (!isCheckoutValid()) || isProcessingPayment}
           onCheckout={handleCheckout}
           pickupTime={pickupTime}
           onPickupTimeChange={setPickupTime}
           isTimeValid={isTimeValid}
+          isLoading={isProcessingPayment}
         />
       )}
     </div>

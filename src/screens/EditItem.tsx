@@ -34,13 +34,6 @@ export default function CheckoutEditItemPage() {
   const isEditingExistingItem = !!itemKey;
   const finalCartItem = itemKey ? items[itemKey] : undefined;
   
-  console.log('EditItem debug:', {
-    productId,
-    itemKey,
-    isEditingExistingItem,
-    finalCartItem,
-    allItems: Object.keys(items)
-  });
 
   useEffect(() => {
     const fetchProduct = async () => {

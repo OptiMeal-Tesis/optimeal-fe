@@ -87,11 +87,7 @@ export default function Register() {
         });
         navigate('/success');
       } catch (error) {
-        console.log('Caught error:', error);
-        console.log('Error message:', error instanceof Error ? error.message : 'Unknown error');
-        
         if (error instanceof Error) {
-          console.log('Setting apiError to:', error.message);
           setApiError(error.message);
         } else {
           setApiError('Error al crear la cuenta');

@@ -43,6 +43,7 @@ interface CheckoutSummaryProps {
   pickupTime: string;
   onPickupTimeChange: (time: string) => void;
   isTimeValid: boolean;
+  isLoading?: boolean;
   className?: string;
 }   
 
@@ -53,6 +54,7 @@ export default function CheckoutSummary({
   pickupTime,
   onPickupTimeChange,
   isTimeValid,
+  isLoading = false,
   className = "" 
 }: CheckoutSummaryProps) {
   const handlePickupTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +141,7 @@ export default function CheckoutSummary({
             ? 'text-white' 
             : 'text-gray-400'
         }`}>
-          Pagar
+          {isLoading ? 'Procesando...' : 'Pagar'}
         </span>
       </button>
     </div>
