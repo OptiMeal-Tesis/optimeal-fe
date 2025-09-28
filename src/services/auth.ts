@@ -88,6 +88,11 @@ class AuthService {
             const response = await apiService.login(credentials);
 
             if (response.success) {
+                // Validate that all required tokens are present
+                if (!response.accessToken || !response.refreshToken || !response.idToken) {
+                    throw new Error('Invalid response: missing required tokens');
+                }
+
                 const tokenData: TokenData = {
                     accessToken: response.accessToken,
                     refreshToken: response.refreshToken,
