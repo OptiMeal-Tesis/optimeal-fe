@@ -251,6 +251,12 @@ class ApiService {
             method: 'GET',
         });
     }
+
+    async getUserOrders(): Promise<ApiResponse<OrderResponse[]>> {
+        return this.request<ApiResponse<OrderResponse[]>>('/orders/my', {
+            method: 'GET',
+        });
+    }
 }
 
 export const apiService = new ApiService();
