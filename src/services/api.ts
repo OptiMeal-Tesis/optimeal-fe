@@ -94,6 +94,46 @@ export interface CheckoutResponse {
   };
 }
 
+// Order related types
+export type OrderStatus = 'PENDING' | 'PREPARING' | 'READY' | 'DELIVERED' | 'CANCELLED';
+
+export interface OrderItemResponse {
+    id: number;
+    productId: number;
+    product: {
+        id: number;
+        name: string;
+        price: number;
+        photo?: string;
+        sides: Side[];
+    };
+    quantity: number;
+    sideId?: number;
+    side?: {
+        id: number;
+        name: string;
+    };
+    notes?: string;
+    price: number;
+}
+
+export interface OrderResponse {
+    id: number;
+    userId: number;
+    user: {
+        id: number;
+        name?: string;
+        email: string;
+        nationalId?: string;
+    };
+    status: OrderStatus;
+    totalPrice: number;
+    pickUpTime: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    orderItems: OrderItemResponse[];
+}
+
 export interface ProductsResponse {
     success: boolean;
     message: string;
@@ -200,6 +240,15 @@ class ApiService {
         return this.request<CheckoutResponse>('/payments/checkout', {
             method: 'POST',
             body: JSON.stringify(checkoutData),
+        });
+    }
+
+    async getOrderById(orderId: number): Promise<ApiResponse<OrderResponse>> {
+        // Simular delay para probar loading state
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        return this.request<ApiResponse<OrderResponse>>(`/orders/${orderId}`, {
+            method: 'GET',
         });
     }
 }

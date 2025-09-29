@@ -9,6 +9,9 @@ export default defineConfig({
     port: 5173,
     allowedHosts: [
       "municipally-nondiagrammatic-ryder.ngrok-free.dev"
-    ]
+    ],
+    hmr: {
+      overlay: false
+    }
   }
 })

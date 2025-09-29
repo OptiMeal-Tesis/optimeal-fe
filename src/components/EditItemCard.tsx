@@ -8,7 +8,6 @@ import {
   Select,
   MenuItem,
   Box,
-  Chip,
   InputLabel,
 } from '@mui/material';
 import RestrictionChip from './RestrictionChip';

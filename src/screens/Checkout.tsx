@@ -52,7 +52,6 @@ export default function Checkout() {
     if (itemToEdit) {
       // Don't allow editing if product is out of stock
       if (itemToEdit.stock === 0) {
-        alert('Este producto está fuera de stock. Solo puedes eliminarlo del carrito.');
         return;
       }
       
@@ -118,11 +117,9 @@ export default function Checkout() {
         // Redirect to Mercado Pago payment page
         window.location.href = response.data.initPoint;
       } else {
-        alert(response.message || 'Error al procesar el pago');
       }
     } catch (error) {
       console.error('Error during checkout:', error);
-      alert('Error al procesar el pago. Por favor, intenta nuevamente.');
     } finally {
       setIsProcessingPayment(false);
     }

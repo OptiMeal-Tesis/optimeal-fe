@@ -4,6 +4,7 @@ import Register from "./screens/Register";
 import SuccessScreen from "./screens/SuccessScreen";
 import Home from "./screens/Home";
 import Orders from "./screens/Orders";
+import OrderDetails from "./screens/OrderDetails";
 import EditProfile from "./screens/EditProfile";
 import Checkout from "./screens/Checkout";
 import CheckoutEditItemPage from "./screens/EditItem";
@@ -46,6 +47,11 @@ function App() {
           <Route path="/orders" element={
             <PrivateRoute>
               <Orders />
+            </PrivateRoute>
+          } />
+          <Route path="/orders/:orderId" element={
+            <PrivateRoute>
+              <OrderDetails />
             </PrivateRoute>
           } />
           <Route path="/edit-profile" element={
