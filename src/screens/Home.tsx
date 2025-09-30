@@ -7,7 +7,8 @@ import SubtotalButton from "../components/SubtotalButton";
 import { apiService } from "../services/api";
 import { useCart } from "../cart";
 import { generateCartItemKey } from "../cart/cart";
-import type { Product } from "../services/api";
+import type { OrderResponse, Product } from "../services/api";
+import ActiveOrderCard from "../components/ActiveOrderCard";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeOrder, setActiveOrder] = useState<OrderResponse | null>(null);
 
   const handleMenuClick = () => {
     setSidebarOpen(true);
@@ -26,23 +28,34 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await apiService.getProducts();
-        if (response.success) {
-          setProducts(response.data);
+        // Fetch products and orders in parallel
+        const [productsResponse, ordersResponse] = await Promise.all([
+          apiService.getProducts(),
+          apiService.getUserOrders()
+        ]);
+
+        if (productsResponse.success) {
+          setProducts(productsResponse.data);
         } else {
-          setError(response.message || 'Error al cargar productos');
+          setError(productsResponse.message || 'Error al cargar productos');
+        }
+        if (ordersResponse.success && ordersResponse.data) {
+          // Find the first active order (not delivered or cancelled)
+          const activeOrder = ordersResponse.data.find(order => 
+            order.status !== 'DELIVERED' && order.status !== 'CANCELLED'
+          );
+          setActiveOrder(activeOrder || null);
         }
       } catch (err) {
-        setError('Error al cargar productos');
+        setError('Error al cargar datos');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchProducts();
+    fetchData();
   }, []);
 
   return (
@@ -54,7 +67,14 @@ export default function Home() {
 
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-4">
+        <div className="p-4 gap-3">
+          {activeOrder && (
+            <ActiveOrderCard 
+              order={activeOrder} 
+              className="mb-3"
+              onClick={() => navigate(`/orders/${activeOrder.id}`)}
+            />
+          )}
           <h1 className="text-sub1 text-black mb-6">
             Platos
           </h1>
@@ -78,7 +98,7 @@ export default function Home() {
           )}
 
           {!loading && !error && products.length > 0 && (
-            <div className="flex flex-col gap-6 pb-24">
+            <div className="flex flex-col gap-3 pb-24">
               {products.map((product) => {
                 const totalQuantity = cart.getTotalQuantityByProductId(product.id);
                 const hasActiveSides = product.sides && product.sides.some(s => s.isActive);

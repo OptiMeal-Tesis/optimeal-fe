@@ -14,12 +14,12 @@ const statusConfig = {
     backgroundColor: 'rgba(93, 93, 93, 0.2)', // 5D5D5D with 20% opacity
   },
   PREPARING: {
-    label: 'En Progreso',
+    label: 'En Preparación',
     textColor: 'var(--color-warning)',
     backgroundColor: 'rgba(240, 177, 0, 0.2)', // F0B100 with 20% opacity
   },
   READY: {
-    label: 'Listo',
+    label: 'Listo para retirar',
     textColor: 'var(--color-success)',
     backgroundColor: 'rgba(76, 175, 80, 0.2)', // 4CAF50 with 20% opacity
   },
