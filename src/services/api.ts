@@ -151,7 +151,11 @@ export interface OrderResponse {
 export interface ProductsResponse {
     success: boolean;
     message: string;
-    data: Product[];
+    data: {
+        foods: Product[];
+        beverages: Product[];
+    };
+    total: number;
 }
 
 export interface ProductResponse {

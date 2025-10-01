@@ -14,7 +14,7 @@ export default function Home() {
   const navigate = useNavigate();
   const cart = useCart();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [productsData, setProductsData] = useState<{ foods: Product[]; beverages: Product[] }>({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeOrder, setActiveOrder] = useState<OrderResponse | null>(null);
@@ -38,7 +38,7 @@ export default function Home() {
         ]);
 
         if (productsResponse.success) {
-          setProducts(productsResponse.data);
+          setProductsData(productsResponse.data);
         } else {
           setError(productsResponse.message || 'Error al cargar productos');
         }
@@ -58,6 +58,67 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const renderProductCards = (products: Product[]) => {
+    return products.map((product) => {
+      const totalQuantity = cart.getTotalQuantityByProductId(product.id);
+      const hasActiveSides = product.sides && product.sides.some(s => s.isActive);
+      
+      const handleAdd = () => {
+        if (hasActiveSides) {
+          // Redirect to edit page for items with sides
+          navigate(`/checkout/edit/${product.id}`);
+        } else {
+          // Add directly to cart for items without sides
+          cart.add(product);
+        }
+      };
+
+      const handleIncrease = () => {
+        if (hasActiveSides) {
+          // Redirect to edit page for items with sides
+          navigate(`/checkout/edit/${product.id}`);
+        } else {
+          // Find the item without sides and increase quantity
+          const itemWithoutSides = Object.values(cart.items).find(
+            item => item.productId === product.id && !item.selectedSide
+          );
+          if (itemWithoutSides) {
+            const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
+            cart.increase(itemKey);
+          }
+        }
+      };
+
+      const handleDecrease = () => {
+        // Find the item without sides and decrease quantity
+        const itemWithoutSides = Object.values(cart.items).find(
+          item => item.productId === product.id && !item.selectedSide
+        );
+        if (itemWithoutSides) {
+          const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
+          cart.decrease(itemKey);
+        }
+      };
+
+      return (
+        <ProductCard
+          key={product.id}
+          name={product.name}
+          description={product.description}
+          price={product.price}
+          photo={product.photo}
+          restrictions={product.restrictions as Restriction[]}
+          variant={totalQuantity > 0 ? "active" : "default"}
+          quantity={totalQuantity}
+          stock={product.stock}
+          onAdd={handleAdd}
+          onIncrease={handleIncrease}
+          onDecrease={handleDecrease}
+        />
+      );
+    });
+  };
+
   return (
     <div className="bg-white h-screen flex flex-col overflow-hidden">
       {/* Sticky Header */}
@@ -75,13 +136,10 @@ export default function Home() {
               onClick={() => navigate(`/orders/${activeOrder.id}`)}
             />
           )}
-          <h1 className="text-sub1 text-black mb-6">
-            Platos
-          </h1>
           
           {loading && (
             <div className="flex justify-center items-center py-8">
-              <p className="text-body1 text-gray-500">Cargando platos...</p>
+              <p className="text-body1 text-gray-500">Cargando productos...</p>
             </div>
           )}
 
@@ -91,72 +149,37 @@ export default function Home() {
             </div>
           )}
 
-          {!loading && !error && products.length === 0 && (
+          {!loading && !error && productsData.foods.length === 0 && productsData.beverages.length === 0 && (
             <div className="flex justify-center items-center py-8">
-              <p className="text-body1 text-gray-500">No hay platos disponibles</p>
+              <p className="text-body1 text-gray-500">No hay productos disponibles</p>
             </div>
           )}
 
-          {!loading && !error && products.length > 0 && (
-            <div className="flex flex-col gap-3 pb-24">
-              {products.map((product) => {
-                const totalQuantity = cart.getTotalQuantityByProductId(product.id);
-                const hasActiveSides = product.sides && product.sides.some(s => s.isActive);
-                
-                const handleAdd = () => {
-                  if (hasActiveSides) {
-                    // Redirect to edit page for items with sides
-                    navigate(`/checkout/edit/${product.id}`);
-                  } else {
-                    // Add directly to cart for items without sides
-                    cart.add(product);
-                  }
-                };
+          {!loading && !error && (productsData.foods.length > 0 || productsData.beverages.length > 0) && (
+            <div className="flex flex-col gap-4 pb-24">
+              {/* Foods Section */}
+              {productsData.foods.length > 0 && (
+                <>
+                  <h1 className="text-sub1 text-black">
+                    Platos
+                  </h1>
+                  <div className="flex flex-col gap-3">
+                    {renderProductCards(productsData.foods)}
+                  </div>
+                </>
+              )}
 
-                const handleIncrease = () => {
-                  if (hasActiveSides) {
-                    // Redirect to edit page for items with sides
-                    navigate(`/checkout/edit/${product.id}`);
-                  } else {
-                    // Find the item without sides and increase quantity
-                    const itemWithoutSides = Object.values(cart.items).find(
-                      item => item.productId === product.id && !item.selectedSide
-                    );
-                    if (itemWithoutSides) {
-                      const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
-                      cart.increase(itemKey);
-                    }
-                  }
-                };
-
-                const handleDecrease = () => {
-                  // Find the item without sides and decrease quantity
-                  const itemWithoutSides = Object.values(cart.items).find(
-                    item => item.productId === product.id && !item.selectedSide
-                  );
-                  if (itemWithoutSides) {
-                    const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
-                    cart.decrease(itemKey);
-                  }
-                };
-
-                return (
-                  <ProductCard
-                    key={product.id}
-                    name={product.name}
-                    description={product.description}
-                    price={product.price}
-                    photo={product.photo}
-                    restrictions={product.restrictions as Restriction[]}
-                    variant={totalQuantity > 0 ? "active" : "default"}
-                    quantity={totalQuantity}
-                    stock={product.stock}
-                    onAdd={handleAdd}
-                    onIncrease={handleIncrease}
-                    onDecrease={handleDecrease}
-                  />
-                );
-              })}
+              {/* Beverages Section */}
+              {productsData.beverages.length > 0 && (
+                <>
+                  <h1 className="text-sub1 text-black">
+                    Bebidas
+                  </h1>
+                  <div className="flex flex-col gap-3">
+                    {renderProductCards(productsData.beverages)}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
