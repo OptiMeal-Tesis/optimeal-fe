@@ -117,16 +117,6 @@ export default function EditProfile() {
             helperText={fieldErrors.national_id ? "El DNI es obligatorio" : ""}
           />
 
-          <CustomTextField
-            label="Email"
-            placeholder="Ingrese su email institucional"
-            type="email"
-            autoComplete="email"
-            value={formData.email}
-            onChange={handleInputChange('email')}
-            error={fieldErrors.email}
-            helperText={fieldErrors.email ? "El email es obligatorio" : ""}
-          />
         </div>
 
         <div className="mt-6 w-full">
