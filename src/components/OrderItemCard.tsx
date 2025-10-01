@@ -6,7 +6,7 @@ interface OrderItemCardProps {
 }
 
 export default function OrderItemCard({ orderItem, className = "" }: OrderItemCardProps) {
-
+  const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
   const getSideText = () => {
     if (orderItem.side) {
       return `Guarnición: ${orderItem.side.name}`;
@@ -60,7 +60,7 @@ export default function OrderItemCard({ orderItem, className = "" }: OrderItemCa
         
         <div className="flex items-center justify-between mt-4">
           <span className="text-body1-bold text-black">
-            $ {orderItem.product.price}
+            {peso.format(orderItem.product.price)}
           </span>
         </div>
       </div>

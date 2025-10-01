@@ -27,6 +27,7 @@ export default function OrderCard({ order, onClick, className = "" }: OrderCardP
       return formatDate(orderDate);
     }
   };
+  const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
   return (
     <div 
@@ -43,7 +44,7 @@ export default function OrderCard({ order, onClick, className = "" }: OrderCardP
           </div>
         </div>
         <p className="text-body2 text-gray-500">
-          $ {order.totalPrice}
+          {peso.format(order.totalPrice)}
         </p>
       </div>
         <div className="text-gray-500">

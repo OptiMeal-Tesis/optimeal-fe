@@ -12,7 +12,7 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
   useEffect(() => {
     const fetchOrder = async () => {
       if (!orderId) {
@@ -134,7 +134,7 @@ export default function OrderDetails() {
         <div className="flex justify-between items-center">
           <span className="text-body1 text-black">Total</span>
           <span className="text-body1-bold text-black">
-            $ {order.totalPrice}
+            {peso.format(order.totalPrice)}
           </span>
         </div>
       </div>

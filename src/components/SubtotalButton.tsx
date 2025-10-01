@@ -1,7 +1,7 @@
 import CartIcon from "../assets/icons/CartIcon";
 
 interface SubtotalButtonProps {
-  subtotal: number;              // in ARS
+  subtotal: number;
   disabled: boolean;
   onContinue: () => void;
   className?: string;
@@ -9,7 +9,6 @@ interface SubtotalButtonProps {
 
 export default function SubtotalButton({ subtotal, disabled, onContinue, className }: SubtotalButtonProps) {
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-
   return (
     <button
       type="button"
@@ -21,7 +20,7 @@ export default function SubtotalButton({ subtotal, disabled, onContinue, classNa
     >
       <div className="flex items-center gap-4">
         <CartIcon width={24} height={25} color={disabled ? "black" : "white"} />
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col items-start gap-1">
           <span className={`text-body1 ${disabled ? "text-black" : "text-white"}`}>Subtotal</span>
           <span className={`text-body1 ${disabled ? "text-black" : "text-white"}`}>{peso.format(subtotal)}</span>
         </div>
