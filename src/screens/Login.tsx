@@ -63,7 +63,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center p-8">
+    <div className="min-h-screen flex items-center p-8 bg-white">
       <div className="w-full flex flex-col gap-8 text-center">
         <div className="flex justify-center">
           <Logo width={222} height={74}/>
