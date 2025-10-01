@@ -2,6 +2,8 @@ import { useState, FormEvent } from "react";
 import Logo from "../assets/icons/Logo";
 import CustomButton from "../components/CustomButton";
 import CustomTextField from "../components/CustomTextField";
+import EyeIcon from "../assets/icons/EyeIcon";
+import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/auth";
 
@@ -9,6 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -87,7 +90,7 @@ export default function Login() {
             <CustomTextField
               label="Contraseña"
               placeholder="Ingrese su contraseña"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               value={password}
               onChange={(e) => {
@@ -96,6 +99,8 @@ export default function Login() {
               }}
               error={Boolean(errors.password || apiError)}
               helperText={errors.password || apiError}
+              rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
+              onRightIconClick={() => setShowPassword(prev => !prev)}
             />
 
             <CustomButton type="submit" fullWidth disabled={isLoading} className="text-body1 py-2">

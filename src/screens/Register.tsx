@@ -2,6 +2,8 @@ import { useState, FormEvent, useEffect } from "react";
 import Logo from "../assets/icons/Logo";
 import CustomButton from "../components/CustomButton";
 import CustomTextField from "../components/CustomTextField";
+import EyeIcon from "../assets/icons/EyeIcon";
+import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/auth";
 
@@ -14,6 +16,8 @@ export default function Register() {
     password: "",
     confirmPassword: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [errors, setErrors] = useState<{
     name?: string;
@@ -162,23 +166,27 @@ export default function Register() {
           <CustomTextField
             label="Contraseña"
             placeholder="Ingrese su contraseña"
-            type="password"
+            type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             value={formData.password}
             onChange={handleInputChange('password')}
             error={Boolean(errors.password)}
             helperText={errors.password}
+            rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
+            onRightIconClick={() => setShowPassword(prev => !prev)}
           />
 
           <CustomTextField
             label="Confirmar Contraseña"
             placeholder="Repita su contraseña"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             autoComplete="new-password"
             value={formData.confirmPassword}
             onChange={handleInputChange('confirmPassword')}
             error={Boolean(errors.confirmPassword)}
             helperText={errors.confirmPassword}
+            rightIcon={showConfirmPassword ? <EyeIcon color="var(--color-gray-500)"/> : <EyeClosedIcon color="var(--color-gray-500)"/>}
+            onRightIconClick={() => setShowConfirmPassword(prev => !prev)}
           />
 
           <CustomButton type="submit" fullWidth disabled={isLoading}>
