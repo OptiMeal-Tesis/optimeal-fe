@@ -33,6 +33,20 @@ export interface RegisterResponse extends AuthResponse {
     };
 }
 
+// User related types
+export interface User {
+    id: number;
+    email: string;
+    name?: string;
+    national_id?: string;
+}
+
+export interface UserResponse {
+    success: boolean;
+    message: string;
+    data?: User;
+}
+
 // Product and cart related types
 export type Restriction =
   | "GLUTEN_FREE"
@@ -254,6 +268,12 @@ class ApiService {
 
     async getUserOrders(): Promise<ApiResponse<OrderResponse[]>> {
         return this.request<ApiResponse<OrderResponse[]>>('/orders/my', {
+            method: 'GET',
+        });
+    }
+
+    async getCurrentUser(): Promise<UserResponse> {
+        return this.request<UserResponse>('/users/me', {
             method: 'GET',
         });
     }
