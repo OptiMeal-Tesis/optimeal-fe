@@ -80,3 +80,11 @@ export const readCart = (): CartState => {
     return { items: {}, subtotal: 0 };
   }
 };
+
+export const clearCartFromStorage = (): void => {
+  try {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+  } catch (error) {
+    console.error('Failed to clear cart from localStorage:', error);
+  }
+};

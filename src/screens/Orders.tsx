@@ -3,16 +3,30 @@ import PageHeader from "../components/PageHeader";
 import OrderCard from "../components/OrderCard";
 import { useNavigate } from "react-router-dom";
 import { apiService, OrderResponse } from "../services/api";
+import { clearCartFromStorage } from "../cart/cart";
 
 export default function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const urlParams = new URLSearchParams(window.location.search);
+  const success = urlParams.get('success');
 
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    if (success === 'true') {
+      clearCartFromStorage();
+      const newUrl = new URL(window.location.href);
+      [
+        'success',
+      ].forEach((k) => newUrl.searchParams.delete(k));
+      window.history.replaceState({}, '', newUrl.toString());
+    }
+  }, [success]);
 
   const fetchOrders = async () => {
     try {
