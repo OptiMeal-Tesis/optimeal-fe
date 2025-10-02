@@ -7,12 +7,13 @@ import CheckoutSummary from "../components/CheckoutSummary";
 import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { apiService, CheckoutRequest } from "../services/api";
+import formatTime from "../utils/formatTime";
 
 export default function Checkout() {
   const cart = useCart();
   const navigate = useNavigate();
   const cartItems = Object.values(cart.items);
-  const [pickupTime, setPickupTime] = useState("13:00");
+  const [pickupTime, setPickupTime] = useState(formatTime(new Date()));
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const handleQuantityChange = (itemKey: string, newQuantity: number) => {
