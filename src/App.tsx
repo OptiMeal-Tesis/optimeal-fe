@@ -7,7 +7,6 @@ import Orders from "./screens/Orders";
 import OrderDetails from "./screens/OrderDetails";
 import EditProfile from "./screens/EditProfile";
 import Checkout from "./screens/Checkout";
-import CheckoutEditItemPage from "./screens/EditItem";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import { CartProvider } from "./cart";
