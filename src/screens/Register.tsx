@@ -30,54 +30,79 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  function validateField(field: keyof typeof formData, value: string): string | undefined {
+    switch (field) {
+      case 'name':
+        if (!value.trim()) {
+          return "El nombre es obligatorio";
+        } else if (value.trim().length < 2) {
+          return "El nombre debe tener al menos 2 caracteres";
+        }
+        break;
+      case 'national_id':
+        if (!value.trim()) {
+          return "El DNI es obligatorio";
+        } else if (!/^\d{7,10}$/.test(value)) {
+          return "El DNI debe tener entre 7-10 dígitos";
+        }
+        break;
+      case 'email':
+        if (!value.trim()) {
+          return "El email es obligatorio";
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value)) {
+            return "Formato de email inválido";
+          }
+        }
+        break;
+      case 'password':
+        if (!value.trim()) {
+          return "La contraseña es obligatoria";
+        } else if (value.length < 8) {
+          return "La contraseña debe tener al menos 8 caracteres";
+        } else {
+          const hasUpperCase = /[A-Z]/.test(value);
+          const hasLowerCase = /[a-z]/.test(value);
+          const hasNumbers = /\d/.test(value);
+          const hasSpecialChar = /[^A-Za-z0-9]/.test(value);
+          
+          if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+            return "Use al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (./?$#@)";
+          }
+        }
+        break;
+      case 'confirmPassword':
+        if (!value.trim()) {
+          return "Confirmar contraseña es obligatorio";
+        } else if (formData.password && value && formData.password !== value) {
+          return "Las contraseñas no coinciden";
+        }
+        break;
+    }
+    return undefined;
+  }
+
+  function handleBlur(field: keyof typeof formData) {
+    return () => {
+      const error = validateField(field, formData[field]);
+      setErrors(prev => ({ ...prev, [field]: error }));
+    };
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setApiError(null);
     const next: typeof errors = {};
     
     // Validaciones frontend (matching backend rules)
-    if (!formData.name.trim()) {
-      next.name = "El nombre es obligatorio";
-    } else if (formData.name.trim().length < 2) {
-      next.name = "El nombre debe tener al menos 2 caracteres";
-    }
-    
-    if (!formData.national_id.trim()) {
-      next.national_id = "El DNI es obligatorio";
-    } else if (!/^\d{7,10}$/.test(formData.national_id)) {
-      next.national_id = "El DNI debe tener entre 7-10 dígitos";
-    }
-    
-    if (!formData.email.trim()) {
-      next.email = "El email es obligatorio";
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        next.email = "Formato de email inválido";
+    const fields: (keyof typeof formData)[] = ['name', 'national_id', 'email', 'password', 'confirmPassword'];
+    fields.forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        next[field] = error;
       }
-    }
-    
-    if (!formData.password.trim()) {
-      next.password = "La contraseña es obligatoria";
-    } else if (formData.password.length < 8) {
-      next.password = "La contraseña debe tener al menos 8 caracteres";
-    } else {
-      // Check password security requirements
-      const hasUpperCase = /[A-Z]/.test(formData.password);
-      const hasLowerCase = /[a-z]/.test(formData.password);
-      const hasNumbers = /\d/.test(formData.password);
-      const hasSpecialChar = /[^A-Za-z0-9]/.test(formData.password);
-      
-      if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
-        next.password = "Use al menos 1 mayúscula, 1 minúscula, 1 número y 1 símbolo (./?$#@)";
-      }
-    }
-    
-    if (!formData.confirmPassword.trim()) {
-      next.confirmPassword = "Confirmar contraseña es obligatorio";
-    } else if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
-      next.confirmPassword = "Las contraseñas no coinciden";
-    }
+    });
     
     setErrors(next);
     if (Object.keys(next).length === 0) {
@@ -104,7 +129,15 @@ export default function Register() {
 
   function handleInputChange(field: keyof typeof formData) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData(prev => ({ ...prev, [field]: e.target.value }));
+      let value = e.target.value;
+      
+      // Special handling for DNI field - only allow numbers and limit to 10 characters
+      if (field === 'national_id') {
+        // Remove any non-numeric characters
+        value = value.replace(/\D/g, '');
+        value = value.slice(0, 10);
+      }
+      setFormData(prev => ({ ...prev, [field]: value }));
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: undefined }));
       }
@@ -137,6 +170,7 @@ export default function Register() {
             autoComplete="name"
             value={formData.name}
             onChange={handleInputChange('name')}
+            onBlur={handleBlur('name')}
             error={Boolean(errors.name)}
             helperText={errors.name}
           />
@@ -144,10 +178,11 @@ export default function Register() {
           <CustomTextField
             label="DNI"
             placeholder="Ingrese su DNI"
-            type="text"
+            type="tel"
             autoComplete="off"
             value={formData.national_id}
             onChange={handleInputChange('national_id')}
+            onBlur={handleBlur('national_id')}
             error={Boolean(errors.national_id)}
             helperText={errors.national_id}
           />
@@ -159,6 +194,7 @@ export default function Register() {
             autoComplete="email"
             value={formData.email}
             onChange={handleInputChange('email')}
+            onBlur={handleBlur('email')}
             error={Boolean(errors.email)}
             helperText={errors.email}
           />
@@ -170,6 +206,7 @@ export default function Register() {
             autoComplete="new-password"
             value={formData.password}
             onChange={handleInputChange('password')}
+            onBlur={handleBlur('password')}
             error={Boolean(errors.password)}
             helperText={errors.password}
             rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
@@ -183,6 +220,7 @@ export default function Register() {
             autoComplete="new-password"
             value={formData.confirmPassword}
             onChange={handleInputChange('confirmPassword')}
+            onBlur={handleBlur('confirmPassword')}
             error={Boolean(errors.confirmPassword)}
             helperText={errors.confirmPassword}
             rightIcon={showConfirmPassword ? <EyeIcon color="var(--color-gray-500)"/> : <EyeClosedIcon color="var(--color-gray-500)"/>}
