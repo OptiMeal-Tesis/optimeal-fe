@@ -91,37 +91,36 @@ export default function CheckoutEditItemPage() {
         remove(itemKey);
       }
       
-      // Add the new/updated item
       addItem(cartItemData);
     }
-
     navigate('/checkout');
   };
 
   // Skeleton
   if (loadingState.isLoading) {
     return (
-      <div className="min-h-screen">
+      <div className="h-screen flex flex-col overflow-hidden">
         <PageHeader title="Editar ítem" />
-        <div className="p-4">
-          <div className="bg-white rounded-xl overflow-hidden">
-            {/* Image skeleton */}
-            <div className="w-full h-48 bg-gray-200 animate-pulse" />
-            
-            {/* Content skeleton */}
-            <div className="p-4 space-y-4">
-              <div className="flex justify-between">
-                <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse" />
-                <div className="h-6 bg-gray-200 rounded w-1/4 animate-pulse" />
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4">
+            <div className="bg-white rounded-xl overflow-hidden">
+              {/* Image skeleton */}
+              <div className="w-full h-48 bg-gray-200 animate-pulse" />
+              
+              {/* Content skeleton */}
+              <div className="p-4 space-y-4">
+                <div className="flex justify-between">
+                  <div className="h-6 bg-gray-200 rounded w-full animate-pulse" />
+                </div>
+                <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
+                <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+                <div className="flex gap-2">
+                  <div className="h-8 bg-gray-200 rounded-full w-20 animate-pulse" />
+                  <div className="h-8 bg-gray-200 rounded-full w-24 animate-pulse" />
+                </div>
+                <div className="h-10 bg-gray-200 rounded animate-pulse" />
+                <div className="h-20 bg-gray-200 rounded animate-pulse" />
               </div>
-              <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
-              <div className="flex gap-2">
-                <div className="h-8 bg-gray-200 rounded-full w-20 animate-pulse" />
-                <div className="h-8 bg-gray-200 rounded-full w-24 animate-pulse" />
-              </div>
-              <div className="h-10 bg-gray-200 rounded animate-pulse" />
-              <div className="h-20 bg-gray-200 rounded animate-pulse" />
             </div>
           </div>
         </div>
@@ -132,20 +131,22 @@ export default function CheckoutEditItemPage() {
   // Error state
   if (loadingState.error || !product) {
     return (
-      <div className="min-h-screen">
+      <div className="h-screen flex flex-col overflow-hidden">
         <PageHeader title="Error" />
-        <div className="p-4">
-          <div className="rounded-xl p-6 text-center gap-10">
-            <h2 className="text-sub1 text-primary-500">Hubo un error al cargar esta página</h2>
-            <p className="text-body1 text-gray-600">
-              {loadingState.error}
-            </p>
-            <CustomButton
-              onClick={() => navigate('/checkout')}
-              className="p-10 bg-primary-500 text-white rounded-lg"
-            >
-              Volver al checkout
-            </CustomButton>
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4">
+            <div className="rounded-xl p-6 text-center gap-10">
+              <h2 className="text-sub1 text-primary-500">Hubo un error al cargar esta página</h2>
+              <p className="text-body1 text-gray-600">
+                {loadingState.error}
+              </p>
+              <CustomButton
+                onClick={() => navigate('/checkout')}
+                className="p-10 bg-primary-500 text-white rounded-lg"
+              >
+                Volver al checkout
+              </CustomButton>
+            </div>
           </div>
         </div>
       </div>
@@ -154,27 +155,29 @@ export default function CheckoutEditItemPage() {
 
   // Success - Render detailed edit item card
   return (
-    <div className="min-h-screen">
+    <div className="h-screen flex flex-col overflow-hidden">
       <PageHeader title={product.name} />
       
-      <div className="p-4">
-        <EditItemCard
-          productId={product.id}
-          name={product.name}
-          description={product.description}
-          price={product.price}
-          quantity={finalCartItem?.quantity ?? 1}
-          photo={product.photo}
-          sides={product.sides}
-          restrictions={product.restrictions}
-          clarifications={finalCartItem?.clarifications ?? ""}
-          selectedSide={finalCartItem?.selectedSide || null}
-          admitsClarifications={product.admitsClarifications}
-          type={product.type}
-          stock={product.stock}
-          isEditingExistingItem={isEditingExistingItem}
-          onEdit={handleEdit}
-        />
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-4">
+          <EditItemCard
+            productId={product.id}
+            name={product.name}
+            description={product.description}
+            price={product.price}
+            quantity={finalCartItem?.quantity ?? 1}
+            photo={product.photo}
+            sides={product.sides}
+            restrictions={product.restrictions}
+            clarifications={finalCartItem?.clarifications ?? ""}
+            selectedSide={finalCartItem?.selectedSide || null}
+            admitsClarifications={product.admitsClarifications}
+            type={product.type}
+            stock={product.stock}
+            isEditingExistingItem={isEditingExistingItem}
+            onEdit={handleEdit}
+          />
+        </div>
       </div>
     </div>
   );

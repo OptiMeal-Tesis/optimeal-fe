@@ -52,9 +52,9 @@ export default function EditItemCard({
   restrictions = [],
   clarifications: initialClarifications = "",
   selectedSide: initialSelectedSide = null,
-  admitsClarifications = false,
-  type = "FOOD",
-  stock = 99,
+  admitsClarifications,
+  type,
+  stock,
   isEditingExistingItem = false,
   onEdit,
   className = ""
@@ -91,11 +91,9 @@ export default function EditItemCard({
   
   // Save button should be disabled if:
   // 1. No changes have been made, OR
-  // 2. Required side is missing, OR  
-  // 3. Product is out of stock
+  // 2. Required side is missing
   const isSaveDisabled = !hasChanges || 
-    (sideIsRequired && !selectedSideId) || 
-    isOutOfStock;
+    (sideIsRequired && !selectedSideId);
 
   // Handle quantity changes
   const handleQuantityIncrease = () => {
@@ -112,13 +110,11 @@ export default function EditItemCard({
     }
   };
 
-  // Handle side selection
   const handleSideChange = (event: any) => {
     const value = event.target.value;
     setSelectedSideId(value || null);
   };
 
-  // Handle clarifications change
   const handleClarificationsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (value.length <= 200) {
@@ -126,7 +122,6 @@ export default function EditItemCard({
     }
   };
 
-  // Handle save
   const handleSave = () => {
     if (!isSaveDisabled) {
       onEdit({
