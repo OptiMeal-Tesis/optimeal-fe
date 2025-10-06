@@ -73,6 +73,7 @@ export default function CheckoutSummary({
             onChange={handlePickupTimeChange}
             fullWidth
             variant="outlined"
+            helperText={isTimeValid ? "" : "El retiro debe ser entre las 12:00 y las 15:00"}
             slotProps={{
               input: {
                 endAdornment: (
@@ -100,6 +101,12 @@ export default function CheckoutSummary({
               '& .MuiInputBase-input': {
                 color: isTimeValid ? 'var(--color-primary-500)' : 'var(--color-error)',
                 paddingRight: '40px'
+              },
+              '& .MuiFormHelperText-root': {
+                color: 'var(--color-error)',
+                fontFamily: 'var(--font-family-sans)',
+                fontSize: '12px',
+                marginLeft: '0px',
               },
             }}
           />
