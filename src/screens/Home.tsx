@@ -43,7 +43,6 @@ export default function Home() {
           setError(productsResponse.message || 'Error al cargar productos');
         }
         if (ordersResponse.success && ordersResponse.data) {
-          // Find the first active order (not delivered or cancelled)
           const activeOrder = ordersResponse.data.find(order => 
             order.status !== 'DELIVERED' && order.status !== 'CANCELLED'
           );
