@@ -1,3 +1,4 @@
+import { useState } from "react";
 import QuantityControl from "./QuantityControl";
 import SmallRestrictionChip from "./SmallRestrictionChip";
 import PlusIcon from "../assets/icons/PlusIcon";
@@ -51,16 +52,28 @@ export default function ProductCard({
   onDecrease,
   onAdd,
 }: ProductCardProps) {
+  const [loaded, setLoaded] = useState(false);
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
   const isOutOfStock = stock === 0;
 
   return (
     <div className="w-full flex gap-1.5 rounded-xl">
-      <img
-        src={photo}
-        alt={name}
-        className="w-[133px] h-[140px] object-cover rounded-lg"
-      />
+      <div className="relative w-[133px] h-[140px] overflow-hidden bg-gray-100 rounded-lg">
+        {!loaded && (
+          <div className="absolute inset-0 animate-pulse bg-gray-200" />
+        )}
+        <img
+          src={photo}
+          alt={name}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
+          onLoad={() => setLoaded(true)}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      </div>
 
       <div className="flex-1 flex flex-col justify-between">
         <div className="flex flex-col gap-1">

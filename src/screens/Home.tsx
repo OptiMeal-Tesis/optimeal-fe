@@ -9,6 +9,7 @@ import { useCart } from "../cart";
 import { generateCartItemKey } from "../cart/cart";
 import type { OrderResponse, Product } from "../services/api";
 import ActiveOrderCard from "../components/ActiveOrderCard";
+import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ export default function Home() {
           name={product.name}
           description={product.description}
           price={product.price}
-          photo={product.photo}
+          photo={product.photo ? product.photo : ImagePlaceholder}
           restrictions={product.restrictions as Restriction[]}
           variant={totalQuantity > 0 ? "active" : "default"}
           quantity={totalQuantity}

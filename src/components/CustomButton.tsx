@@ -5,6 +5,7 @@ interface CustomButtonProps extends ButtonProps {
   variant?: 'contained' | 'outlined' | 'text';
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
+  loading?: boolean;
   children: React.ReactNode;
 }
 
@@ -12,6 +13,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   variant = 'contained',
   size = 'large',
   fullWidth = false,
+  loading = false,
   children,
   className = '',
   ...props
@@ -21,6 +23,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       variant={variant}
       size={size}
       fullWidth={fullWidth}
+      disabled={loading || props.disabled}
       className={`${className}`}
       sx={{
         borderRadius: '12px',
@@ -37,6 +40,12 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           maxHeight: 'inherit',
           minWidth: 'inherit',
           maxWidth: 'inherit',
+        },
+        '&.Mui-disabled': {
+          backgroundColor: variant === 'contained' ? 'var(--color-gray-300)' : 'transparent',
+          color: 'var(--color-gray-500)',
+          borderColor: variant === 'outlined' ? 'var(--color-gray-300)' : 'transparent',
+          opacity: 0.7,
         },
         ...(variant === 'contained' && {
           backgroundColor: 'var(--color-primary-500)',
@@ -63,7 +72,14 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       }}
       {...props}
     >
-      {children}
+      {loading ? (
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          <span>{children}</span>
+        </div>
+      ) : (
+        children
+      )}
     </Button>
   );
 };

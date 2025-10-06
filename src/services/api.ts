@@ -33,6 +33,22 @@ export interface RegisterResponse extends AuthResponse {
     };
 }
 
+export interface ForgotPasswordRequest {
+    email: string;
+}
+
+export interface ResetPasswordRequest {
+    email: string;
+    confirmationCode: string;
+    newPassword: string;
+}
+
+export interface ForgotPasswordResponse extends AuthResponse {
+    data?: {
+        email: string;
+    };
+}
+
 // User related types
 export interface User {
     id: number;
@@ -279,6 +295,20 @@ class ApiService {
     async getCurrentUser(): Promise<UserResponse> {
         return this.request<UserResponse>('/users/me', {
             method: 'GET',
+        });
+    }
+
+    async forgotPassword(email: string): Promise<ForgotPasswordResponse> {
+        return this.request<ForgotPasswordResponse>('/auth/forgot-password', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+        });
+    }
+
+    async resetPassword(data: ResetPasswordRequest): Promise<AuthResponse> {
+        return this.request<AuthResponse>('/auth/confirm-forgot-password', {
+            method: 'POST',
+            body: JSON.stringify(data),
         });
     }
 }
