@@ -87,23 +87,32 @@ export default function Login() {
               helperText={errors.email}
             />
 
-            <CustomTextField
-              label="Contraseña"
-              placeholder="Ingrese su contraseña"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (apiError) setApiError(null);
-              }}
-              error={Boolean(errors.password || apiError)}
-              helperText={errors.password || apiError}
-              rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
-              onRightIconClick={() => setShowPassword(prev => !prev)}
-            />
-
-            <CustomButton type="submit" fullWidth disabled={isLoading} className="text-body1 py-2">
+            <div className="flex flex-col gap-2">
+              <CustomTextField
+                label="Contraseña"
+                placeholder="Ingrese su contraseña"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (apiError) setApiError(null);
+                }}
+                error={Boolean(errors.password || apiError)}
+                helperText={errors.password || apiError}
+                rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
+                onRightIconClick={() => setShowPassword(prev => !prev)}
+              />
+              <p className="text-body2 text-gray-600 text-left">
+                ¿Olvidaste tu contraseña?{" "}
+                <Link
+                  to="/forgot-password"
+                  className="text-label-bold text-gray-500 underline underline-offset-2">
+                  Recuperarla
+                </Link>
+              </p>
+            </div>
+            <CustomButton type="submit" fullWidth loading={isLoading} className="text-body1 py-2">
               {isLoading ? 'Iniciando sesión...' : 'Iniciar'}
             </CustomButton>
         </form>

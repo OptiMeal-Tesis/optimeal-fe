@@ -12,6 +12,8 @@ import PublicRoute from "./components/PublicRoute";
 import { CartProvider } from "./cart";
 import { BrowserRouter as Router, Navigate,Route, Routes } from "react-router-dom";
 import EditItem from "./screens/EditItem";
+import ForgotPassword from "./screens/ForgotPassword";
+import { Toaster } from "react-hot-toast";
 
 
 function App() {
@@ -68,11 +70,17 @@ function App() {
               <EditItem />
             </PrivateRoute>
           } />
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          } />
           
           <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </Router>
       </CartProvider>
+      <Toaster />
     </div>
   );
 }
