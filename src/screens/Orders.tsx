@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from "../components/PageHeader";
 import OrderCard from "../components/OrderCard";
+import ActiveOrderCard from "../components/ActiveOrderCard";
 import { useNavigate } from "react-router-dom";
 import { apiService, OrderResponse } from "../services/api";
 import { clearCartFromStorage } from "../cart/cart";
+import { authService } from "../services/auth";
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -19,7 +21,8 @@ export default function Orders() {
 
   useEffect(() => {
     if (success === 'true') {
-      clearCartFromStorage();
+      const currentUser = authService.getCurrentUser();
+      clearCartFromStorage(currentUser?.email || null);
       const newUrl = new URL(window.location.href);
       [
         'success',
@@ -87,12 +90,12 @@ export default function Orders() {
         {/* Active Orders Section */}
         {activeOrders.length > 0 && (
           <>
-            <p className="text-sub1 text-gray-500 mb-4">
+            <p className="text-sub1 text-black mb-4">
               Pedidos activos
             </p>
             <div className="space-y-4 mb-8">
               {activeOrders.map((order) => (
-                <OrderCard
+                <ActiveOrderCard
                   key={order.id}
                   order={order}
                   onClick={() => handleOrderClick(order.id)}
@@ -105,7 +108,7 @@ export default function Orders() {
         {/* Previous Orders Section */}
         {previousOrders.length > 0 && (
           <>
-            <p className="text-sub1 text-gray-600 mb-4">
+            <p className="text-sub1 text-black mb-4">
               Pedidos anteriores
             </p>
             <div className="space-y-4">
