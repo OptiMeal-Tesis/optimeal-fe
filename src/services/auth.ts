@@ -1,5 +1,6 @@
 import { apiService } from './api';
 import { tokenStorage } from '../utils/tokenStorage';
+import { clearAllCartStorage } from '../cart/cart';
 import type { LoginRequest, RegisterRequest } from './api';
 import type { TokenData } from '../utils/tokenStorage.ts';
 
@@ -40,8 +41,9 @@ class AuthService {
                     error: null,
                 });
             } else {
-                // Clear invalid tokens
+                // Clear invalid tokens and cart
                 tokenStorage.clearTokens();
+                clearAllCartStorage();
                 this.setState({
                     user: null,
                     isAuthenticated: false,
@@ -51,6 +53,7 @@ class AuthService {
             }
         } catch (error) {
             console.error('Error initializing auth:', error);
+            clearAllCartStorage(); 
             this.setState({
                 user: null,
                 isAuthenticated: false,
@@ -148,6 +151,7 @@ class AuthService {
 
     public logout(): void {
         tokenStorage.clearTokens();
+        clearAllCartStorage(); 
         this.setState({
             user: null,
             isAuthenticated: false,
