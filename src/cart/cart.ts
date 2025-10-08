@@ -42,13 +42,20 @@ export interface CartState {
   subtotal: number; // derived: sum(price * quantity)
 }
 
-export const LOCAL_STORAGE_KEY = "optimeal.cart.v1";
+// Generate user-specific cart key
+export const getCartStorageKey = (userEmail: string | null): string => {
+  if (!userEmail) {
+    return "optimeal.cart.v1"; // fallback for non-authenticated users
+  }
+  return `optimeal.cart.v1.${userEmail}`;
+};
 
 // Utility functions for localStorage persistence
-export const persistCart = (state: CartState): void => {
+export const persistCart = (state: CartState, userEmail: string | null): void => {
   const persist = () => {
     try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+      const key = getCartStorageKey(userEmail);
+      localStorage.setItem(key, JSON.stringify(state));
     } catch (error) {
       console.error('Failed to persist cart to localStorage:', error);
     }
@@ -62,9 +69,10 @@ export const persistCart = (state: CartState): void => {
   }
 };
 
-export const readCart = (): CartState => {
+export const readCart = (userEmail: string | null): CartState => {
   try {
-    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const key = getCartStorageKey(userEmail);
+    const stored = localStorage.getItem(key);
     if (!stored) return { items: {}, subtotal: 0 };
     
     const parsed = JSON.parse(stored);
@@ -81,10 +89,27 @@ export const readCart = (): CartState => {
   }
 };
 
-export const clearCartFromStorage = (): void => {
+export const clearCartFromStorage = (userEmail: string | null): void => {
   try {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    const key = getCartStorageKey(userEmail);
+    localStorage.removeItem(key);
   } catch (error) {
     console.error('Failed to clear cart from localStorage:', error);
+  }
+};
+
+export const clearAllCartStorage = (): void => {
+  try {
+    // Get all localStorage keys and remove cart-related ones
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('optimeal.cart.v1')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+  } catch (error) {
+    console.error('Failed to clear all cart storage:', error);
   }
 };

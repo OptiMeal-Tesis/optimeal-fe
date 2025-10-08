@@ -8,6 +8,7 @@ import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { apiService, CheckoutRequest } from "../services/api";
 import formatTime from "../utils/formatTime";
+import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 
 export default function Checkout() {
   const cart = useCart();
@@ -157,7 +158,7 @@ export default function Checkout() {
                     name={item.name}
                     price={item.price}
                     quantity={item.quantity}
-                    photo={item.photo}
+                    photo={item.photo ? item.photo : ImagePlaceholder}
                     sides={item.sides}
                     selectedSide={item.selectedSide}
                     itemKey={itemKey}

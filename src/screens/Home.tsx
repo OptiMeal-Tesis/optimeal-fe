@@ -8,7 +8,7 @@ import { apiService } from "../services/api";
 import { useCart } from "../cart";
 import { generateCartItemKey } from "../cart/cart";
 import type { OrderResponse, Product } from "../services/api";
-import ActiveOrderCard from "../components/ActiveOrderCard";
+import ActiveOrdersCarousel from "../components/ActiveOrdersCarousel";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 
 export default function Home() {
@@ -18,7 +18,7 @@ export default function Home() {
   const [productsData, setProductsData] = useState<{ foods: Product[]; beverages: Product[] }>({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeOrder, setActiveOrder] = useState<OrderResponse | null>(null);
+  const [activeOrders, setActiveOrders] = useState<OrderResponse[]>([]);
 
   const handleMenuClick = () => {
     setSidebarOpen(true);
@@ -44,10 +44,10 @@ export default function Home() {
           setError(productsResponse.message || 'Error al cargar productos');
         }
         if (ordersResponse.success && ordersResponse.data) {
-          const activeOrder = ordersResponse.data.find(order => 
+          const activeOrders = ordersResponse.data.filter(order => 
             order.status !== 'DELIVERED' && order.status !== 'CANCELLED'
           );
-          setActiveOrder(activeOrder || null);
+          setActiveOrders(activeOrders);
         }
       } catch (err) {
         setError('Error al cargar datos');
@@ -129,11 +129,11 @@ export default function Home() {
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 gap-3">
-          {activeOrder && (
-            <ActiveOrderCard 
-              order={activeOrder} 
+          {activeOrders.length > 0 && (
+            <ActiveOrdersCarousel 
+              orders={activeOrders} 
               className="mb-3"
-              onClick={() => navigate(`/orders/${activeOrder.id}`)}
+              onOrderClick={(orderId) => navigate(`/orders/${orderId}`)}
             />
           )}
           

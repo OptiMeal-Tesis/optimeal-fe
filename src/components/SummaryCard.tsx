@@ -10,11 +10,11 @@ interface SummaryItemCardProps {
   photo?: string;
   sides: Side[];
   selectedSide?: string | null;
-  onQuantityChange: (itemKey: string, newQuantity: number) => void;
+  onQuantityChange: (productId: string, newQuantity: number) => void;
   onEdit?: (productId: string) => void;
   showEditButton?: boolean;
   className?: string;
-  itemKey?: string; // Add itemKey prop
+  itemKey: string;
 }
 
 export default function SummaryItemCard({
@@ -34,19 +34,15 @@ export default function SummaryItemCard({
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
 
   const handleDecrease = () => {
-    if (itemKey) {
-      if (quantity > 1) {
-        onQuantityChange(itemKey, quantity - 1);
-      } else {
-        onQuantityChange(itemKey, 0); 
-      }
+    if (quantity > 1) {
+      onQuantityChange(itemKey, quantity - 1);
+    } else {
+      onQuantityChange(itemKey, 0); 
     }
   };
 
   const handleIncrease = () => {
-    if (itemKey) {
-      onQuantityChange(itemKey, quantity + 1);
-    }
+    onQuantityChange(itemKey, quantity + 1);
   };
 
   const handleEdit = () => {
@@ -65,6 +61,7 @@ export default function SummaryItemCard({
     }
     
     const side = sides.find(s => s.id == selectedSide);
+    
     return side ? `Guarnición: ${side.name}` : "Guarnición: -";
   };
 
