@@ -156,29 +156,29 @@ export default function Home() {
           )}
 
           {!loading && !error && (productsData.foods.length > 0 || productsData.beverages.length > 0) && (
-            <div className="flex flex-col gap-4 pb-24">
+            <div className="flex flex-col gap-6 pb-28">
               {/* Foods Section */}
               {productsData.foods.length > 0 && (
-                <>
+                <div className="flex flex-col gap-2">
                   <h1 className="text-sub1 text-black">
                     Platos
                   </h1>
                   <div className="flex flex-col gap-3">
                     {renderProductCards(productsData.foods)}
                   </div>
-                </>
+                </div>
               )}
 
               {/* Beverages Section */}
               {productsData.beverages.length > 0 && (
-                <>
+                <div className="flex flex-col gap-2">
                   <h1 className="text-sub1 text-black">
                     Bebidas
                   </h1>
                   <div className="flex flex-col gap-3">
                     {renderProductCards(productsData.beverages)}
                   </div>
-                </>
+                </div>
               )}
             </div>
           )}
