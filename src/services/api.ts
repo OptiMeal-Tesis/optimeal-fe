@@ -33,10 +33,6 @@ export interface RegisterResponse extends AuthResponse {
     };
 }
 
-export interface ForgotPasswordRequest {
-    email: string;
-}
-
 export interface ResetPasswordRequest {
     email: string;
     confirmationCode: string;
@@ -51,7 +47,7 @@ export interface ForgotPasswordResponse extends AuthResponse {
 
 // User related types
 export interface User {
-    id: number;
+    id: number | string;
     email: string;
     name?: string;
     national_id?: string;
@@ -309,6 +305,13 @@ class ApiService {
         return this.request<AuthResponse>('/auth/confirm-forgot-password', {
             method: 'POST',
             body: JSON.stringify(data),
+        });
+    }
+
+    async updateUser(userId: number, userData: { name?: string; national_id?: string; email?: string }): Promise<UserResponse> {
+        return this.request<UserResponse>(`/users/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify(userData),
         });
     }
 }
