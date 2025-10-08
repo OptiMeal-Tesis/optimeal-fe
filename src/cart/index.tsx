@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Product, ProductId, CartState, CartItem, persistCart, readCart, generateCartItemKey } from './cart';
+import { Product, ProductId, CartState, CartItem, persistCart, readCart, generateCartItemKey, clearCartFromStorage } from './cart';
+import { authService } from '../services/auth';
 
 // Action types
 type Action =
@@ -202,10 +203,43 @@ interface CartProviderProps {
 
 export function CartProvider({ children }: CartProviderProps) {
   const [state, dispatch] = useReducer(cartReducer, { items: {}, subtotal: 0 });
+  const [currentUserEmail, setCurrentUserEmail] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = authService.subscribe((authState) => {
+      const userEmail = authState.user?.email || null;
+      
+      // If user changed, clear current cart and load user-specific cart
+      if (userEmail !== currentUserEmail) {
+        // Clear current cart
+        dispatch({ type: "CLEAR" });
+        
+        // Load user's cart
+        const savedCart = readCart(userEmail);
+        if (savedCart.items && Object.keys(savedCart.items).length > 0) {
+          Object.values(savedCart.items).forEach(item => {
+            dispatch({
+              type: "ADD_ITEM",
+              item: item,
+            });
+          });
+        }
+        
+        setCurrentUserEmail(userEmail);
+      }
+    });
+
+    // Initialize with current user
+    const initialAuthState = authService.getState();
+    const initialUserEmail = initialAuthState.user?.email || null;
+    setCurrentUserEmail(initialUserEmail);
+
+    return unsubscribe;
+  }, [currentUserEmail]);
 
   // Load initial state from localStorage
   useEffect(() => {
-    const savedCart = readCart();
+    const savedCart = readCart(currentUserEmail);
     if (savedCart.items && Object.keys(savedCart.items).length > 0) {
       const subtotal = calculateSubtotal(savedCart.items);
       dispatch({ type: "CLEAR" });
@@ -216,12 +250,12 @@ export function CartProvider({ children }: CartProviderProps) {
         });
       });
     }
-  }, []);
+  }, [currentUserEmail]);
 
   // Persist to localStorage on every state change
   useEffect(() => {
-    persistCart(state);
-  }, [state]);
+    persistCart(state, currentUserEmail);
+  }, [state, currentUserEmail]);
 
   // Helper functions
   const getItemsByProductId = (productId: ProductId): CartItem[] => {
