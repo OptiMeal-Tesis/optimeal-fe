@@ -17,7 +17,7 @@ export default function QuantityControl({ quantity, onDecrease, onIncrease, disa
     >
       <button 
         type="button" 
-        className={`text-body2-bold ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
+        className={`pb-0.5 text-body1-bold ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
         onClick={disabled ? undefined : onDecrease}
         disabled={disabled}
       >
@@ -28,7 +28,7 @@ export default function QuantityControl({ quantity, onDecrease, onIncrease, disa
       </span>
       <button 
         type="button" 
-        className={`text-body2-bold ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
+        className={`flex items-center justify-center text-body1-bold leading-none ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
         onClick={disabled ? undefined : onIncrease}
         disabled={disabled}
       >
