@@ -20,6 +20,10 @@ export default function EditProfile() {
     national_id: false
   });
   const [userId, setUserId] = useState<number | null>(null);
+  const [originalFormData, setOriginalFormData] = useState({
+    name: "",
+    national_id: ""
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -28,10 +32,15 @@ export default function EditProfile() {
         const response = await apiService.getCurrentUser();
         
         if (response.success && response.data) {
-          setFormData({
+          const userData = {
             name: response.data.name || "",
             national_id: response.data.national_id?.toString() || "",
             email: response.data.email || ""
+          };
+          setFormData(userData);
+          setOriginalFormData({
+            name: userData.name,
+            national_id: userData.national_id
           });
           setUserId(Number(response.data.id));
         } else {
@@ -73,6 +82,11 @@ export default function EditProfile() {
       default:
         return false;
     }
+  };
+
+  const formHasChanges = (): boolean => {
+    return formData.name.trim() !== originalFormData.name.trim() ||
+           formData.national_id.trim() !== originalFormData.national_id.trim();
   };
 
   const handleSave = async () => {
@@ -176,7 +190,7 @@ export default function EditProfile() {
             type="button" 
             fullWidth
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || !formHasChanges()}
             className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300"
           >
             {isSaving ? 'Guardando...' : 'Guardar cambios'}
