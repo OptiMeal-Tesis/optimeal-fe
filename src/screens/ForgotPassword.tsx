@@ -212,7 +212,7 @@ export const ForgotPassword = () => {
                         <CustomButton 
                             type="submit" 
                             fullWidth 
-                            disabled={isLoading}
+                            loading={isLoading}
                         >
                             {isLoading ? 'Enviando código...' : 'Enviar código de recuperación'}
                         </CustomButton>

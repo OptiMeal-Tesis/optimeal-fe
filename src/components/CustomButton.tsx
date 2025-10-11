@@ -47,6 +47,25 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           borderColor: variant === 'outlined' ? 'var(--color-gray-300)' : 'transparent',
           opacity: 0.7,
         },
+        ...(loading && variant === 'contained' && {
+          backgroundColor: 'var(--color-primary-500) !important',
+          color: '#fff !important',
+          opacity: 0.8,
+          '&.Mui-disabled': {
+            backgroundColor: 'var(--color-primary-500) !important',
+            color: '#fff !important',
+            opacity: 0.8,
+          },
+        }),
+        ...(loading && variant === 'outlined' && {
+          borderColor: 'var(--color-primary-500) !important',
+          color: 'var(--color-primary-500) !important',
+          '&.Mui-disabled': {
+            borderColor: 'var(--color-primary-500) !important',
+            color: 'var(--color-primary-500) !important',
+            opacity: 0.8,
+          },
+        }),
         ...(variant === 'contained' && {
           backgroundColor: 'var(--color-primary-500)',
           color: '#fff',

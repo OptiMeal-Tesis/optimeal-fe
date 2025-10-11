@@ -190,7 +190,8 @@ export default function EditProfile() {
             type="button" 
             fullWidth
             onClick={handleSave}
-            disabled={isSaving || !formHasChanges()}
+            loading={isSaving}
+            disabled={!formHasChanges()}
             className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300"
           >
             {isSaving ? 'Guardando...' : 'Guardar cambios'}

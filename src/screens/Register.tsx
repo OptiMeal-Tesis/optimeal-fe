@@ -132,7 +132,7 @@ export default function Register() {
         setIsLoading(false);
       }
     } else {
-      toast.error("Por favor, corrige los errores en el formulario");
+      toast.error("Por favor, corrige los errores del formulario");
     }
   }
 
@@ -228,7 +228,7 @@ export default function Register() {
             onRightIconClick={() => setShowConfirmPassword(prev => !prev)}
           />
 
-          <CustomButton type="submit" fullWidth disabled={isLoading}>
+          <CustomButton type="submit" fullWidth loading={isLoading}>
             {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
           </CustomButton>
         </form>
