@@ -83,17 +83,17 @@ export default function Orders() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
       <PageHeader title="Pedidos" onNavigate={() => navigate('/home')}/>
       
-      <div className="p-5">
+      <div className="flex-1 overflow-y-auto p-5 mb-8">
         {/* Active Orders Section */}
         {activeOrders.length > 0 && (
           <>
             <p className="text-sub1 text-black mb-4">
               Pedidos activos
             </p>
-            <div className="space-y-4 mb-8">
+            <div className="flex flex-col gap-4 overflow-y-auto mb-8">
               {activeOrders.map((order) => (
                 <ActiveOrderCard
                   key={order.id}
