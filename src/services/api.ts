@@ -6,10 +6,17 @@ export interface LoginRequest {
     password: string;
 }
 
+// To get specific error messages
+export interface ValidationError {
+    field: string;
+    message: string;
+}
+
 export interface AuthResponse {
     success: boolean;
     message: string;
     data?: any;
+    errors?: ValidationError[];
 }
 
 export interface LoginResponse extends AuthResponse {
@@ -228,6 +235,7 @@ class ApiService {
             if (!response.ok) {
                 const error = new Error(responseData.message || `HTTP error! status: ${response.status}`);
                 (error as any).status = response.status;
+                (error as any).errors = responseData.errors;
                 throw error;
             }
 

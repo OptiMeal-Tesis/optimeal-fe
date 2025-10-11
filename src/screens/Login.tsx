@@ -6,6 +6,7 @@ import EyeIcon from "../assets/icons/EyeIcon";
 import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/auth";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,12 +15,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
 
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    setApiError(null);
     const next: typeof errors = {};
     
     if (!email.trim()) {
@@ -40,25 +39,19 @@ export default function Login() {
       setIsLoading(true);
       try {
         await authService.login({ email, password });
-        // Login successful, redirect to home
+        toast.success("¡Inicio de sesión exitoso!");
         navigate('/home');
       } catch (error) {
         if (error instanceof Error) {
-          const errorMessage = error.message.toLowerCase();
-          // Check if it's a password-related error
-          if (errorMessage.includes('contraseña') && errorMessage.includes('requisitos de seguridad')) {
-            setApiError(error.message);
-          } else if (errorMessage.includes('credenciales inválidas') || errorMessage.includes('usuario no confirmado')) {
-            setApiError(error.message);
-          } else {
-            setApiError(error.message);
-          }
+          toast.error(error.message);
         } else {
-          setApiError('Error de autenticación');
+          toast.error('Error de autenticación');
         }
       } finally {
         setIsLoading(false);
       }
+    } else {
+      toast.error("Por favor, siga las instrucciones del formulario");
     }
   }
 
@@ -81,7 +74,6 @@ export default function Login() {
               aria-label="Email address"
               onChange={(e) => {
                 setEmail(e.target.value);
-                if (apiError) setApiError(null);
               }}
               error={Boolean(errors.email)}
               helperText={errors.email}
@@ -96,10 +88,9 @@ export default function Login() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  if (apiError) setApiError(null);
                 }}
-                error={Boolean(errors.password || apiError)}
-                helperText={errors.password || apiError}
+                error={Boolean(errors.password)}
+                helperText={errors.password}
                 rightIcon={showPassword ? <EyeIcon /> : <EyeClosedIcon />}
                 onRightIconClick={() => setShowPassword(prev => !prev)}
               />

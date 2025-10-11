@@ -80,7 +80,15 @@ function App() {
           </Routes>
         </Router>
       </CartProvider>
-      <Toaster />
+      <Toaster toastOptions={{
+        className: "toast-custom",
+        success: {
+          className: "toast-success",
+        },
+        error: {
+          className: "toast-error",
+        },
+      }} />
     </div>
   );
 }

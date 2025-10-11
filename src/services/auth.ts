@@ -1,6 +1,6 @@
 import { apiService } from './api';
 import { tokenStorage } from '../utils/tokenStorage';
-import type { LoginRequest, RegisterRequest, ResetPasswordRequest } from './api';
+import type { LoginRequest, RegisterRequest, ResetPasswordRequest, ValidationError } from './api';
 import { clearAllCartStorage } from '../cart/cart';
 import type { TokenData } from '../utils/tokenStorage.ts';
 
@@ -141,11 +141,15 @@ class AuthService {
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Error al registrar usuario';
+            const validationErrors = (error as any)?.errors;
             this.setState({
                 isLoading: false,
                 error: errorMessage,
             });
-            throw error;
+            
+            const detailedErrorMessage = new Error(errorMessage);
+            (detailedErrorMessage as any).validationErrors = validationErrors;
+            throw detailedErrorMessage;
         }
     }
 

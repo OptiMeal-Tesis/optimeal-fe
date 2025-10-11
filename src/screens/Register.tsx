@@ -6,6 +6,8 @@ import EyeIcon from "../assets/icons/EyeIcon";
 import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/auth";
+import type { ValidationError } from "../services/api";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -28,7 +30,6 @@ export default function Register() {
   }>({});
 
   const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
 
   function validateField(field: keyof typeof formData, value: string): string | undefined {
     switch (field) {
@@ -92,7 +93,6 @@ export default function Register() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    setApiError(null);
     const next: typeof errors = {};
     
     // Validaciones frontend (matching backend rules)
@@ -117,13 +117,22 @@ export default function Register() {
         navigate('/success');
       } catch (error) {
         if (error instanceof Error) {
-          setApiError(error.message);
+          const apiValidationErrors = (error as any)?.validationErrors;
+          if (apiValidationErrors && Array.isArray(apiValidationErrors) && apiValidationErrors.length > 0) {
+            apiValidationErrors.forEach((validationError: ValidationError) => {
+              toast.error(validationError.message);
+            });
+          } else {
+            toast.error(error.message);
+          }
         } else {
-          setApiError('Error al crear la cuenta');
+          toast.error('Error al crear la cuenta');
         }
       } finally {
         setIsLoading(false);
       }
+    } else {
+      toast.error("Por favor, corrige los errores en el formulario");
     }
   }
 
@@ -141,9 +150,6 @@ export default function Register() {
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: undefined }));
       }
-      if (apiError) {
-        setApiError(null);
-      }
     };
   }
 
@@ -157,11 +163,6 @@ export default function Register() {
         <p className="text-sub1">Crear Cuenta</p>
 
         <form className="w-full flex flex-col gap-6" onSubmit={onSubmit} noValidate>
-          {apiError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {apiError}
-            </div>
-          )}
 
           <CustomTextField
             label="Nombre"

@@ -87,6 +87,31 @@
   font-weight: 400;
 }
 
+.toast-custom {
+  color: #333 !important;
+  border-radius: 18px !important;
+  font-family: var(--font-family-sans) !important;
+  font-size: 16px !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  padding: 10px 16px !important;
+  width: calc(100vw - 20px) !important;
+  max-width: calc(100vw - 20px) !important;
+  margin: 0 10px !important;
+}
+
+.toast-success {
+  color: #111 !important;
+  border-radius: 18px !important;
+}
+
+.toast-error {
+  color: #111 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  border-radius: 18px !important;
+}
+
 .text-label {
   font-family: var(--font-family-sans);
   font-size: var(--font-size-label);
