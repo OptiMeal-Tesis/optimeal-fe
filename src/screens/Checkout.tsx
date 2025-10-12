@@ -129,7 +129,7 @@ export default function Checkout() {
 
   return (
     <div className="h-screen bg-white flex flex-col">
-      <PageHeader title="Tu Pedido" subtitle={formatDate(new Date())} onNavigate={() => navigate('/home')} />
+      <PageHeader title="Tu Pedido" subtitle={formatDate(new Date())} />
       
       <div className="px-4 overflow-y-auto py-5 pb-24">
         {cartItems.length === 0 ? (
