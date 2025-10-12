@@ -42,8 +42,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           maxWidth: 'inherit',
         },
         '&.Mui-disabled': {
-          backgroundColor: variant === 'contained' ? 'var(--color-gray-300)' : 'transparent',
-          color: 'var(--color-gray-500)',
+          backgroundColor: variant === 'contained' ? 'var(--color-gray-300) !important' : 'transparent',
+          color: 'var(--color-gray-500) !important',
           borderColor: variant === 'outlined' ? 'var(--color-gray-300)' : 'transparent',
           opacity: 0.7,
         },

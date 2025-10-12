@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../cart';
-import { generateCartItemKey } from '../cart/cart';
 import PageHeader from '../components/PageHeader';
 import EditItemCard from '../components/EditItemCard';
 import { Product } from '../services/api';
-import { CartItem } from '../cart/cart';
 import { apiService } from '../services/api';
 import CustomButton from '../components/CustomButton';
+import toast from 'react-hot-toast';
 
 interface LoadingState {
   isLoading: boolean;
@@ -29,6 +28,7 @@ export default function CheckoutEditItemPage() {
     isLoading: true,
     error: null
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   // Simple logic: if itemKey exists, we're editing; if not, we're adding new
   const isEditingExistingItem = !!itemKey;
@@ -59,7 +59,7 @@ export default function CheckoutEditItemPage() {
     fetchProduct();
   }, [productId]);
 
-  const handleEdit = (payload: {
+  const handleEdit = async (payload: {
     productId: string;
     quantity: number;
     selectedSideId: string | null;
@@ -67,33 +67,49 @@ export default function CheckoutEditItemPage() {
   }) => {
     if (!product) return;
 
-    if (payload.quantity === 0) {
-      // Remove item from cart if quantity is 0
-      if (itemKey) {
-        remove(itemKey);
-      }
-    } else {
-      // Create cart item data
-      const cartItemData = {
-        productId: payload.productId.toString(),
-        quantity: payload.quantity,
-        price: product.price,
-        name: product.name,
-        photo: product.photo,
-        sides: product.sides,
-        selectedSide: payload.selectedSideId ? payload.selectedSideId.toString() : null,
-        clarifications: payload.clarifications,
-        stock: product.stock
-      };
+    setIsSaving(true);
+    
+    try {
+      if (payload.quantity === 0) {
+        // Remove item from cart if quantity is 0
+        if (itemKey) {
+          remove(itemKey);
+        }
+        toast.success('Ítem eliminado del carrito');
+      } else {
+        // Create cart item data
+        const cartItemData = {
+          productId: payload.productId.toString(),
+          quantity: payload.quantity,
+          price: product.price,
+          name: product.name,
+          photo: product.photo,
+          sides: product.sides,
+          selectedSide: payload.selectedSideId ? payload.selectedSideId.toString() : null,
+          clarifications: payload.clarifications,
+          stock: product.stock
+        };
 
-      if (isEditingExistingItem && itemKey) {
-        // If editing existing item, remove old and add new
-        remove(itemKey);
+        if (isEditingExistingItem && itemKey) {
+          // If editing existing item, remove old and add new
+          remove(itemKey);
+        }
+        
+        addItem(cartItemData);
+        
+        if (isEditingExistingItem) {
+          toast.success('Cambios guardados exitosamente');
+        } else {
+          toast.success('Ítem agregado al carrito');
+        }
       }
-      
-      addItem(cartItemData);
+    } catch (error) {
+      console.error('Error saving changes:', error);
+      toast.error('Error al guardar los cambios');
+    } finally {
+      setIsSaving(false);
     }
-    navigate('/checkout');
+    // navigate('/checkout');
   };
 
   // Skeleton
@@ -176,6 +192,7 @@ export default function CheckoutEditItemPage() {
             stock={product.stock}
             isEditingExistingItem={isEditingExistingItem}
             onEdit={handleEdit}
+            isSaving={isSaving}
           />
         </div>
       </div>

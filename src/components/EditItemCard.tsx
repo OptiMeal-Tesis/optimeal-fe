@@ -37,6 +37,7 @@ export type EditItemCardProps = {
     selectedSideId: string | null;
     clarifications: string | null;
   }) => void;
+  isSaving?: boolean;
   className?: string;
 };
 
@@ -57,6 +58,7 @@ export default function EditItemCard({
   stock,
   isEditingExistingItem = false,
   onEdit,
+  isSaving = false,
   className = ""
 }: EditItemCardProps) {
   const [quantity, setQuantity] = useState(initialQuantity);
@@ -72,7 +74,6 @@ export default function EditItemCard({
     }
   }, [initialQuantity, initialSelectedSide, initialClarifications, isEditingExistingItem]);
 
-  // Format price
   const peso = new Intl.NumberFormat("es-AR", { 
     style: "currency", 
     currency: "ARS", 
@@ -95,7 +96,6 @@ export default function EditItemCard({
   const isSaveDisabled = !hasChanges || 
     (sideIsRequired && !selectedSideId);
 
-  // Handle quantity changes
   const handleQuantityIncrease = () => {
     if (quantity < 99 && !isOutOfStock && quantity < (stock || 0)) {
       setQuantity(prev => prev + 1);
@@ -326,17 +326,15 @@ export default function EditItemCard({
             onClick={handleSave}
             variant='contained'
             size='large'
-            disabled={isSaveDisabled}
-            className={`
-              w-full py-11 rounded-lg text-sub1-bold
-              ${isSaveDisabled
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-primary-500 text-white'
-              }
-            `}
+            loading={isSaving}
+            disabled={isSaveDisabled && !isSaving}
+            className="w-full py-11 rounded-lg text-sub1-bold"
             aria-label={isEditingExistingItem ? "Guardar cambios" : "Agregar al carrito"}
           >
-            {isEditingExistingItem ? "Guardar cambios" : "Agregar al carrito"}
+            {isSaving 
+              ? (isEditingExistingItem ? "Guardando..." : "Agregando...") 
+              : (isEditingExistingItem ? "Guardar cambios" : "Agregar al carrito")
+            }
           </CustomButton>
         </div>
       </CardActions>
