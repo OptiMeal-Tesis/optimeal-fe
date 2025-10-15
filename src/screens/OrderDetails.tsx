@@ -40,22 +40,18 @@ export default function OrderDetails() {
     fetchOrder();
   }, [orderId]);
 
-  const getStatusMessage = (status: OrderStatus, pickUpTime: Date) => {
-    const pickUpTimeFormatted = new Date(pickUpTime).toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
+  const getStatusMessage = (status: OrderStatus, shift: string) => {
+    const shiftStartTime = shift.split('-')[0];
 
     switch (status) {
       case 'PENDING':
-        return `Tu pedido estará listo a las ${pickUpTimeFormatted}`;
+        return `Tu pedido estará listo a las ${shiftStartTime}`;
       case 'PREPARING':
-        return `Tu pedido estará listo a las ${pickUpTimeFormatted}`;
+        return `Tu pedido estará listo a las ${shiftStartTime}`;
       case 'READY':
-        return `Tu pedido está listo para retirar`;
+        return `Tu pedido está listo!`;
       case 'DELIVERED':
-        return `Retiraste tu pedido a las ${pickUpTimeFormatted}`;
+        return `Retiraste tu pedido a las ${shiftStartTime}`;
       case 'CANCELLED':
         return `Tu pedido fue cancelado. Reintegro mediante Mercado Pago, si corresponde. Puede demorar.`;
       default:
@@ -65,7 +61,7 @@ export default function OrderDetails() {
 
   if (loading) {
     return (
-      <div className="h-screen bg-white flex flex-col">
+      <div className="min-h-[100dvh] bg-white flex flex-col">
         <PageHeader 
           title="Pedido" 
           onNavigate={() => navigate('/orders')} 
@@ -83,7 +79,7 @@ export default function OrderDetails() {
       : `No se encontró una orden con ID ${orderId}`;
     
     return (
-      <div className="h-screen bg-white flex flex-col">
+      <div className="min-h-[100dvh] bg-white flex flex-col">
         <PageHeader 
           title="Error" 
           onNavigate={() => navigate('/orders')} 
@@ -100,19 +96,19 @@ export default function OrderDetails() {
   }
 
   return (
-    <div className="h-screen bg-white flex flex-col">
+    <div className="min-h-[100dvh] bg-white flex flex-col relative">
       <PageHeader 
         title={`Pedido ${order.id}`} 
         subtitle={formatDate(new Date(order.createdAt))} 
         onNavigate={() => navigate('/orders')} 
       />
       
-      <div className="px-4 overflow-y-auto py-5 pb-24">
+      <div className="px-4 overflow-y-auto pt-3 pb-28">
         {/* Status Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <p className={`text-body2 text-black`}>
-              {getStatusMessage(order.status, order.pickUpTime)}
+              {getStatusMessage(order.status, order.shift)}
             </p>
             <StatusChip status={order.status} />
           </div>
