@@ -64,7 +64,6 @@ export default function OrderDetails() {
       <div className="min-h-[100dvh] bg-white flex flex-col">
         <PageHeader 
           title="Pedido" 
-          onNavigate={() => navigate('/orders')} 
         />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-body1 text-gray-500">Cargando pedido...</p>
@@ -82,7 +81,6 @@ export default function OrderDetails() {
       <div className="min-h-[100dvh] bg-white flex flex-col">
         <PageHeader 
           title="Error" 
-          onNavigate={() => navigate('/orders')} 
         />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -100,7 +98,6 @@ export default function OrderDetails() {
       <PageHeader 
         title={`Pedido ${order.id}`} 
         subtitle={formatDate(new Date(order.createdAt))} 
-        onNavigate={() => navigate('/orders')} 
       />
       
       <div className="px-4 overflow-y-auto pt-3 pb-28">

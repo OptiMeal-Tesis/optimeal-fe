@@ -101,6 +101,7 @@ export default function CheckoutEditItemPage() {
           toast.success('Cambios guardados exitosamente');
         } else {
           toast.success('Ítem agregado al carrito');
+          navigate('/checkout');
         }
       }
     } catch (error) {

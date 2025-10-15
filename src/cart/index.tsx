@@ -100,13 +100,33 @@ const cartReducer = (state: CartState, action: Action): CartState => {
     case "ADD_ITEM": {
       const { item } = action;
       const itemKey = generateCartItemKey(item.productId, item.selectedSide);
-      newState = {
-        ...state,
-        items: {
-          ...state.items,
-          [itemKey]: item,
-        },
-      };
+      const existingItem = state.items[itemKey];
+      if (existingItem) {
+        const requestedQuantity = item.quantity;
+        const currentQuantity = existingItem.quantity;
+        const maxStock = existingItem.stock;
+        const mergedQuantity = Math.min(currentQuantity + requestedQuantity, maxStock);
+
+        newState = {
+          ...state,
+          items: {
+            ...state.items,
+            [itemKey]: {
+              ...existingItem,
+              ...item,
+              quantity: mergedQuantity,
+            },
+          },
+        };
+      } else {
+        newState = {
+          ...state,
+          items: {
+            ...state.items,
+            [itemKey]: item,
+          },
+        };
+      }
       break;
     }
 

@@ -63,7 +63,7 @@ export default function Orders() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <PageHeader title="Pedidos" onNavigate={() => navigate('/home')}/>
+        <PageHeader title="Pedidos" />
         <div className="p-8 flex justify-center items-center">
           <div className="text-body1 text-gray-500">Cargando pedidos...</div>
         </div>
@@ -74,7 +74,7 @@ export default function Orders() {
   if (error) {
     return (
       <div className="min-h-screen bg-white">
-        <PageHeader title="Pedidos" onNavigate={() => navigate('/home')}/>
+        <PageHeader title="Pedidos" />
         <div className="p-8 flex justify-center items-center">
           <div className="text-body1 text-red-500">{error}</div>
         </div>
@@ -84,7 +84,7 @@ export default function Orders() {
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
-      <PageHeader title="Pedidos" onNavigate={() => navigate('/home')}/>
+      <PageHeader title="Pedidos" />
       
       <div className="flex-1 overflow-y-auto p-5 mb-8">
         {/* Active Orders Section */}
