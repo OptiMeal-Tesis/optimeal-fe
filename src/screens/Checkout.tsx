@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../cart";
 import { generateCartItemKey } from "../cart/cart";
 import PageHeader from "../components/PageHeader";
@@ -6,16 +6,44 @@ import SummaryItemCard from "../components/SummaryCard";
 import CheckoutSummary from "../components/CheckoutSummary";
 import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
-import { apiService, CheckoutRequest } from "../services/api";
-import formatTime from "../utils/formatTime";
+import { apiService, CheckoutRequest, ShiftsResponse } from "../services/api";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
+import toast from "react-hot-toast";
 
 export default function Checkout() {
   const cart = useCart();
   const navigate = useNavigate();
   const cartItems = Object.values(cart.items);
-  const [pickupTime, setPickupTime] = useState(formatTime(new Date()));
+  const [selectedShift, setSelectedShift] = useState("");
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [shifts, setShifts] = useState<string[]>([]);
+  const [shiftsLoading, setShiftsLoading] = useState(true);
+  const [shiftsError, setShiftsError] = useState<string | null>(null);
+
+  const SELECTED_SHIFT_STORAGE_KEY = "optimeal.selectedShift.v1";
+
+  const persistSelectedShift = (shift: string): void => {
+    try {
+      localStorage.setItem(SELECTED_SHIFT_STORAGE_KEY, shift);
+    } catch (error) {
+      console.error('Failed to persist selected shift to localStorage:', error);
+    }
+  };
+
+  const readSelectedShift = (): string => {
+    try {
+      const stored = localStorage.getItem(SELECTED_SHIFT_STORAGE_KEY);
+      return stored || "";
+    } catch (error) {
+      console.error('Failed to read selected shift from localStorage:', error);
+      return "";
+    }
+  };
+
+  const updateSelectedShift = (shift: string): void => {
+    setSelectedShift(shift);
+    persistSelectedShift(shift);
+  };
 
   const handleQuantityChange = (itemKey: string, newQuantity: number) => {
     const item = cart.items[itemKey];
@@ -71,17 +99,105 @@ export default function Checkout() {
     });
   };
 
-  const validatePickupTime = (time: string): boolean => {
-    const [hours, minutes] = time.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    const minTime = 12 * 60; 
-    const maxTime = 15 * 60;
-    return totalMinutes >= minTime && totalMinutes <= maxTime;
+  const validateSelectedShift = (shift: string): boolean => {
+    return shift !== "" && shift.trim() !== "";
   };
 
-  const isTimeValid = validatePickupTime(pickupTime);
+  const parseShiftToPickupTime = (shift: string): string => {
+    const startTime = shift.split('-')[0];
+    const today = new Date();
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const pickupDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+    return pickupDate.toISOString();
+  };
+
+  const findClosestShift = (availableShifts: string[]): string => {
+    if (availableShifts.length === 0) return "";
+    
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert to minutes for easier comparison
+    
+    let closestShift = "";
+    let minTimeDifference = Infinity;
+    
+    const validShifts = availableShifts
+      .filter(shift => shift.toLowerCase() !== 'all')
+      .sort((a, b) => {
+        const timeA = a.split('-')[0];
+        const timeB = b.split('-')[0];
+        return timeA.localeCompare(timeB);
+      });
+    
+    if (validShifts.length === 0) return "";
+    
+    // Find closest shift
+    for (const shift of validShifts) {
+      const startTime = shift.split('-')[0];
+      const [hours, minutes] = startTime.split(':').map(Number);
+      const shiftTime = hours * 60 + minutes;
+      const timeDifference = Math.abs(shiftTime - currentTime);
+      
+      if (timeDifference < minTimeDifference) {
+        minTimeDifference = timeDifference;
+        closestShift = shift;
+      }
+    }
+    
+    const lastShift = validShifts[validShifts.length - 1];
+    const lastShiftTime = lastShift.split('-')[0];
+    const [lastHours, lastMinutes] = lastShiftTime.split(':').map(Number);
+    const lastShiftTimeMinutes = lastHours * 60 + lastMinutes;
+    
+    if (currentTime > lastShiftTimeMinutes) {
+      return lastShift;
+    }
+    
+    return closestShift;
+  };
+
+  // Fetch shifts on component mount
+  useEffect(() => {
+    const fetchShifts = async () => {
+      try {
+        setShiftsLoading(true);
+        setShiftsError(null);
+        const response: ShiftsResponse = await apiService.getShifts();
+        
+        if (response.success) {
+          setShifts(response.data);
+        } else {
+          setShiftsError(response.message || 'Error al cargar los horarios');
+        }
+      } catch (err) {
+        setShiftsError('Error al cargar los horarios disponibles');
+        console.error('Error fetching shifts:', err);
+      } finally {
+        setShiftsLoading(false);
+      }
+    };
+
+    fetchShifts();
+  }, []);
+
+  useEffect(() => {
+    if (shifts.length > 0 && !selectedShift) {
+      const savedShift = readSelectedShift();
+      
+      if (savedShift && shifts.includes(savedShift)) {
+        setSelectedShift(savedShift);
+      } else {
+        const closestShift = findClosestShift(shifts);
+        if (closestShift) {
+          setSelectedShift(closestShift);
+          persistSelectedShift(closestShift);
+        }
+      }
+    }
+  }, [shifts]);
+
+  const isShiftValid = validateSelectedShift(selectedShift);
   const isCheckoutValid = (): boolean => {
-    return validateRequiredSides() && isTimeValid;
+    return validateRequiredSides() && isShiftValid;
   };
 
   const transformCartToCheckoutRequest = (): CheckoutRequest => {
@@ -92,15 +208,12 @@ export default function Checkout() {
       notes: item.clarifications || undefined,
     }));
 
-    // Create ISO datetime string for pickup time
-    const today = new Date();
-    const [hours, minutes] = pickupTime.split(':').map(Number);
-    const pickupDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
-    const pickupTimeISO = pickupDateTime.toISOString();
+    const pickupTimeISO = parseShiftToPickupTime(selectedShift);
 
     return {
       items,
       pickUpTime: pickupTimeISO,
+      shift: selectedShift,
     };
   };
 
@@ -116,12 +229,26 @@ export default function Checkout() {
       const response = await apiService.createCheckout(checkoutRequest);
       
       if (response.success && response.data?.initPoint) {
-        // Redirect to Mercado Pago payment page
         window.location.href = response.data.initPoint;
       } else {
+        toast.error('Error al procesar el pago. Por favor intenta nuevamente.');
       }
     } catch (error) {
       console.error('Error during checkout:', error);
+      
+      if (error instanceof Error) {
+        const errorMessage = error.message || 'Error desconocido';
+        
+        if ((error as any).status === 400) {
+          toast.error('Error de validación. Por favor verifica los datos e intenta nuevamente.');
+        } else if ((error as any).status === 401) {
+          toast.error('Sesión expirada. Inicia sesión nuevamente.');
+        } else {
+          toast.error('Error al procesar el pago');
+        }
+      } else {
+        toast.error('Error inesperado al procesar el pago');
+      }
     } finally {
       setIsProcessingPayment(false);
     }
@@ -178,10 +305,13 @@ export default function Checkout() {
           subtotal={cart.subtotal}
           isDisabled={cart.subtotal === 0 || (!isCheckoutValid()) || isProcessingPayment}
           onCheckout={handleCheckout}
-          pickupTime={pickupTime}
-          onPickupTimeChange={setPickupTime}
-          isTimeValid={isTimeValid}
+          selectedShift={selectedShift}
+          onShiftChange={updateSelectedShift}
+          isShiftValid={isShiftValid}
           isLoading={isProcessingPayment}
+          shifts={shifts}
+          shiftsLoading={shiftsLoading}
+          shiftsError={shiftsError}
         />
       )}
     </div>

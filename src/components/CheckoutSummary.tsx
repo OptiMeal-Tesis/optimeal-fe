@@ -1,38 +1,34 @@
 import { useState } from "react";
-import { TextField, Box, InputAdornment } from "@mui/material";
+import { TextField, Box, InputAdornment, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CartIcon from "../assets/icons/CartIcon";
 import ClockIcon from "../assets/icons/ClockIcon";
 
-const StyledTextField = styled(TextField)(() => ({
+const StyledSelect = styled(Select)(() => ({
   '& .MuiOutlinedInput-root': {
-    borderRadius: '12px',
+    borderRadius: '12px !important',
     fontSize: '16px',
     fontFamily: 'var(--font-family-sans)',
     '& fieldset': {
-      borderWidth: '2px',
+      borderWidth: '2px !important',
     },
     '&:hover fieldset': {
+      borderWidth: '2px !important',
       borderColor: 'var(--color-primary-500)',
     },
     '&.Mui-focused fieldset': {
+      borderWidth: '2px !important',
       borderColor: 'var(--color-primary-500)',
     },
   },
-  '& .MuiInputBase-input': {
+  '& .MuiSelect-select': {
     padding: '12px 14px',
     fontSize: '16px',
     fontFamily: 'var(--font-family-sans) !important',
-    // Hide native time picker icon
-    '&::-webkit-calendar-picker-indicator': {
-      display: 'none',
-    },
-    '&::-webkit-inner-spin-button': {
-      display: 'none',
-    },
-    '&::-webkit-outer-spin-button': {
-      display: 'none',
-    },
+  },
+  // In order to hide the default dropdown chevron
+  '& .MuiSelect-icon': {
+    display: 'none',
   },
 }));
 
@@ -40,76 +36,126 @@ interface CheckoutSummaryProps {
   subtotal: number;
   isDisabled: boolean;
   onCheckout: () => void;
-  pickupTime: string;
-  onPickupTimeChange: (time: string) => void;
-  isTimeValid: boolean;
+  selectedShift: string;
+  onShiftChange: (shift: string) => void;
+  isShiftValid: boolean;
   isLoading?: boolean;
   className?: string;
+  shifts: string[];
+  shiftsLoading: boolean;
+  shiftsError: string | null;
 }   
 
 export default function CheckoutSummary({ 
   subtotal,
   isDisabled, 
   onCheckout,
-  pickupTime,
-  onPickupTimeChange,
-  isTimeValid,
+  selectedShift,
+  onShiftChange,
+  isShiftValid,
   isLoading = false,
-  className = "" 
+  className = "",
+  shifts,
+  shiftsLoading,
+  shiftsError
 }: CheckoutSummaryProps) {
-  const handlePickupTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onPickupTimeChange(e.target.value);
+  const handleShiftChange = (event: any) => {
+    onShiftChange(event.target.value);
   };
 
   return (
     <div className={`fixed left-4 right-4 bottom-4 z-50 overflow-hidden ${className}`}>
-      {/* Pickup time input */}
+      {/* Pickup shift selection */}
       <div className={`px-6 py-4 bg-white ${isDisabled ? "border-2 border-gray-200 border-b-0" : "border-2 border-primary-500 border-b-0"} rounded-t-xl`}>
         <h3 className="text-body1 text-primary-500 mb-2.5">Horario de retiro</h3>
         <Box sx={{ width: '100%' }}>
-          <StyledTextField
-            type="time"
-            value={pickupTime}
-            onChange={handlePickupTimeChange}
-            fullWidth
-            variant="outlined"
-            helperText={isTimeValid ? "" : "El retiro debe ser entre las 12:00 y las 15:00"}
-            slotProps={{
-              input: {
-                endAdornment: (
+          {shiftsLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <p className="text-body1 text-gray-500">Cargando horarios...</p>
+            </div>
+          ) : shiftsError ? (
+            <div className="flex items-center justify-center py-4">
+              <p className="text-body1 text-error">{shiftsError}</p>
+            </div>
+          ) : (
+            <FormControl fullWidth>
+              <StyledSelect
+                value={selectedShift}
+                onChange={handleShiftChange}
+                displayEmpty
+                endAdornment={
                   <InputAdornment position="end">
                     <ClockIcon 
                       width={20} 
                       height={20} 
-                      color={isTimeValid ? 'var(--color-primary-500)' : 'var(--color-error)'}
+                      color={isShiftValid ? 'var(--color-primary-500)' : 'var(--color-error)'}
                     />
                   </InputAdornment>
-                ),
-              },
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white',
-                '& fieldset': {
-                  borderColor: isTimeValid ? 'var(--color-primary-500)' : 'var(--color-error)',
-                },
-
-                '&.Mui-focused fieldset': {
-                  borderColor: 'var(--color-primary-400)',
-                },
-              },
-              '& .MuiInputBase-input': {
-                color: isTimeValid ? 'var(--color-primary-500)' : 'var(--color-error)',
-                paddingRight: '40px'
-              },
-              '& .MuiFormHelperText-root': {
-                color: 'var(--color-error)',
-                fontFamily: 'var(--font-family-sans)',
-                fontSize: '12px',
-                marginLeft: '0px',
-              },
-            }}
-          />
+                }
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      borderRadius: '12px',
+                      marginTop: '4px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                      '& .MuiMenuItem-root': {
+                        fontFamily: 'var(--font-family-sans)',
+                        fontSize: '16px',
+                        padding: '12px 16px',
+                        '&:hover': {
+                          backgroundColor: 'var(--color-primary-50)',
+                        },
+                        '&.Mui-selected': {
+                          backgroundColor: 'var(--color-primary-100)',
+                          '&:hover': {
+                            backgroundColor: 'var(--color-primary-200)',
+                          },
+                        },
+                      },
+                    },
+                  },
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'white',
+                    borderRadius: '12px !important',
+                    '& fieldset': {
+                      borderWidth: '2px !important',
+                      borderColor: isShiftValid ? 'var(--color-primary-500)' : 'var(--color-error)',
+                    },
+                    '&:hover fieldset': {
+                      borderWidth: '2px !important',
+                      borderColor: isShiftValid ? 'var(--color-primary-500)' : 'var(--color-error)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderWidth: '2px !important',
+                      borderColor: 'var(--color-primary-500)',
+                    },
+                  },
+                  '& .MuiSelect-select': {
+                    color: isShiftValid ? 'var(--color-primary-500)' : 'var(--color-error)',
+                    paddingRight: '40px'
+                  },
+                }}
+              >
+                <MenuItem value="" disabled>
+                  <em>Selecciona un horario</em>
+                </MenuItem>
+                {shifts
+                  .filter(shift => shift.toLowerCase() !== 'all')
+                  .map((shift) => (
+                    <MenuItem key={shift} value={shift}>
+                      {shift}
+                    </MenuItem>
+                  ))}
+              </StyledSelect>
+              {!isShiftValid && (
+                <p className="text-error text-xs mt-1 ml-0" style={{ fontFamily: 'var(--font-family-sans)' }}>
+                  Por favor selecciona un horario de retiro
+                </p>
+              )}
+            </FormControl>
+          )}
         </Box>
       </div>
 

@@ -115,6 +115,7 @@ export interface CheckoutItem {
 export interface CheckoutRequest {
   items: CheckoutItem[];
   pickUpTime: string; // ISO datetime string
+  shift: string; // Shift information (e.g., "12:00-12:30")
 }
 
 export interface CheckoutResponse {
@@ -125,6 +126,12 @@ export interface CheckoutResponse {
     initPoint: string;
     preferenceId: string;
   };
+}
+
+export interface ShiftsResponse {
+  success: boolean;
+  message: string;
+  data: string[];
 }
 
 // Order related types
@@ -320,6 +327,12 @@ class ApiService {
         return this.request<UserResponse>(`/users/${userId}`, {
             method: 'PUT',
             body: JSON.stringify(userData),
+        });
+    }
+
+    async getShifts(): Promise<ShiftsResponse> {
+        return this.request<ShiftsResponse>('/orders/shifts', {
+            method: 'GET',
         });
     }
 }
