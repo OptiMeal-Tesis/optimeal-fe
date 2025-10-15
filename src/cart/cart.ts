@@ -113,3 +113,31 @@ export const clearAllCartStorage = (): void => {
     console.error('Failed to clear all cart storage:', error);
   }
 };
+
+export const SELECTED_SHIFT_STORAGE_KEY = "optimeal.selectedShift.v1";
+
+export const setSelectedShiftStorage = (shift: string): void => {
+  try {
+    localStorage.setItem(SELECTED_SHIFT_STORAGE_KEY, shift);
+  } catch (error) {
+    console.error('Failed to persist selected shift to localStorage:', error);
+  }
+};
+
+export const getSelectedShiftStorage = (): string => {
+  try {
+    const stored = localStorage.getItem(SELECTED_SHIFT_STORAGE_KEY);
+    return stored || "";
+  } catch (error) {
+    console.error('Failed to read selected shift from localStorage:', error);
+    return "";
+  }
+};
+
+export const clearSelectedShiftStorage = (): void => {
+  try {
+    localStorage.removeItem(SELECTED_SHIFT_STORAGE_KEY);
+  } catch (error) {
+    console.error('Failed to clear selected shift from localStorage:', error);
+  }
+};

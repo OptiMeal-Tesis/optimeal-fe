@@ -7,6 +7,7 @@ import CheckoutSummary from "../components/CheckoutSummary";
 import formatDate from "../utils/formatDate";
 import { useNavigate } from "react-router-dom";
 import { apiService, CheckoutRequest, ShiftsResponse } from "../services/api";
+import { getSelectedShiftStorage, setSelectedShiftStorage } from "../cart/cart";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 import toast from "react-hot-toast";
 
@@ -20,29 +21,11 @@ export default function Checkout() {
   const [shiftsLoading, setShiftsLoading] = useState(true);
   const [shiftsError, setShiftsError] = useState<string | null>(null);
 
-  const SELECTED_SHIFT_STORAGE_KEY = "optimeal.selectedShift.v1";
-
-  const persistSelectedShift = (shift: string): void => {
-    try {
-      localStorage.setItem(SELECTED_SHIFT_STORAGE_KEY, shift);
-    } catch (error) {
-      console.error('Failed to persist selected shift to localStorage:', error);
-    }
-  };
-
-  const readSelectedShift = (): string => {
-    try {
-      const stored = localStorage.getItem(SELECTED_SHIFT_STORAGE_KEY);
-      return stored || "";
-    } catch (error) {
-      console.error('Failed to read selected shift from localStorage:', error);
-      return "";
-    }
-  };
+  // selected shift storage helpers moved to utils/selectedShiftStorage
 
   const updateSelectedShift = (shift: string): void => {
     setSelectedShift(shift);
-    persistSelectedShift(shift);
+    setSelectedShiftStorage(shift);
   };
 
   const handleQuantityChange = (itemKey: string, newQuantity: number) => {
@@ -181,7 +164,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (shifts.length > 0 && !selectedShift) {
-      const savedShift = readSelectedShift();
+      const savedShift = getSelectedShiftStorage();
       
       if (savedShift && shifts.includes(savedShift)) {
         setSelectedShift(savedShift);
@@ -189,7 +172,7 @@ export default function Checkout() {
         const closestShift = findClosestShift(shifts);
         if (closestShift) {
           setSelectedShift(closestShift);
-          persistSelectedShift(closestShift);
+          setSelectedShiftStorage(closestShift);
         }
       }
     }
