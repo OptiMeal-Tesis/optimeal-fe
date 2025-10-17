@@ -52,6 +52,10 @@ export default function Orders() {
     navigate(`/orders/${orderId}`);
   };
 
+  const handleBackNavigation = () => {
+    window.history.length > 1 ? navigate(-1) : navigate('/home');
+  };
+
   const activeOrders = orders.filter(order => 
     order.status === 'PENDING' || order.status === 'PREPARING' || order.status === 'READY'
   );
@@ -84,7 +88,7 @@ export default function Orders() {
 
   return (
     <div className="h-screen bg-white flex flex-col overflow-hidden">
-      <PageHeader title="Pedidos" />
+      <PageHeader title="Pedidos" onNavigate={handleBackNavigation}/>
       
       <div className="flex-1 overflow-y-auto p-5 mb-8">
         {/* Active Orders Section */}

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { Product, ProductId, CartState, CartItem, persistCart, readCart, generateCartItemKey, clearCartFromStorage } from './cart';
+import { Product, ProductId, CartState, CartItem, persistCart, readCart, generateCartItemKey, clearCartFromStorage, clearSelectedShiftStorage } from './cart';
 import { authService } from '../services/auth';
+ 
 
 // Action types
 type Action =
@@ -233,6 +234,8 @@ export function CartProvider({ children }: CartProviderProps) {
       if (userEmail !== currentUserEmail) {
         // Clear current cart
         dispatch({ type: "CLEAR" });
+        // Clear selected shift when user context changes (cart context reset)
+        clearSelectedShiftStorage();
         
         // Load user's cart
         const savedCart = readCart(userEmail);
@@ -294,7 +297,11 @@ export function CartProvider({ children }: CartProviderProps) {
     increase: (itemKey: string) => dispatch({ type: "INCREASE", itemKey }),
     decrease: (itemKey: string) => dispatch({ type: "DECREASE", itemKey }),
     remove: (itemKey: string) => dispatch({ type: "REMOVE", itemKey }),
-    clear: () => dispatch({ type: "CLEAR" }),
+    clear: () => {
+      dispatch({ type: "CLEAR" });
+      // Also clear selected shift when cart is intentionally cleared
+      clearSelectedShiftStorage();
+    },
     getItemsByProductId,
     getTotalQuantityByProductId,
   };
