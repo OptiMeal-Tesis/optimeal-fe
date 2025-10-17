@@ -84,6 +84,10 @@ function App() {
         className: "toast-custom",
         success: {
           className: "toast-success",
+          iconTheme: {
+            primary: "#10B981",
+            secondary: "#FFFFFF",
+          },
         },
         error: {
           className: "toast-error",

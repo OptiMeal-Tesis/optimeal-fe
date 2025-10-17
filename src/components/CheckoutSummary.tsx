@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { TextField, Box, InputAdornment, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Box, InputAdornment, Select, MenuItem, FormControl } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CartIcon from "../assets/icons/CartIcon";
 import ClockIcon from "../assets/icons/ClockIcon";
