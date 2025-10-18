@@ -42,16 +42,16 @@ export default function OrderDetails() {
 
   const getStatusMessage = (status: OrderStatus, shift: string) => {
     const shiftStartTime = shift.split('-')[0];
+    const shiftEndTime = shift.split('-')[1];
 
     switch (status) {
       case 'PENDING':
-        return `Tu pedido estará listo a las ${shiftStartTime}`;
       case 'PREPARING':
-        return `Tu pedido estará listo a las ${shiftStartTime}`;
+        return `Tu pedido estará listo entre ${shiftStartTime} y ${shiftEndTime}`;
       case 'READY':
         return `Tu pedido está listo!`;
       case 'DELIVERED':
-        return `Retiraste tu pedido a las ${shiftStartTime}`;
+        return `Retiraste tu pedido entre ${shiftStartTime} y ${shiftEndTime}`;
       case 'CANCELLED':
         return `Tu pedido fue cancelado. Reintegro mediante Mercado Pago, si corresponde. Puede demorar.`;
       default:
