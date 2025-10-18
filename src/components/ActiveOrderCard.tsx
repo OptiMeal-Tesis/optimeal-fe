@@ -19,7 +19,7 @@ export default function ActiveOrderCard({ order, onClick, className = "" }: Acti
     >
       <div className="flex-1">
         <div className="flex flex-col gap-1">
-          <p className="text-sub1 text-gray-900">
+          <p className="text-sub1 text-black">
             Pedido {order.id}
           </p>
           <div className="w-fit">

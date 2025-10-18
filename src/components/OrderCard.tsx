@@ -19,23 +19,23 @@ export default function OrderCard({ order, onClick, className = "" }: OrderCardP
 
   return (
     <div 
-      className={`flex items-center justify-between px-4 py-3 bg-white border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${className}`}
+      className={`opacity-60 flex items-center justify-between px-4 py-3 bg-white border-2 border-primary-500 rounded-lg ${className}`}
       onClick={onClick}
     >
       <div className="flex-1">
         <div className="flex flex-col gap-1">
-          <p className="text-sub1 text-gray-500">
+          <p className="text-sub1 text-gray-900">
             Pedido {order.id} - {formatOrderDate(order.createdAt)}
           </p>
           <div className="w-fit">
             <StatusChip status={order.status} />
           </div>
-          <p className="text-body2 text-gray-500">
+          <p className="text-body2 text-gray-700">
             {peso.format(order.totalPrice)}
           </p>
         </div>
       </div>
-      <div className="text-gray-500">
+      <div className="text-primary-500">
         <RightChevronIcon />
       </div>
     </div>
