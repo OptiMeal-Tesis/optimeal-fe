@@ -7,18 +7,19 @@ import SubtotalButton from "../components/SubtotalButton";
 import { apiService } from "../services/api";
 import { useCart } from "../cart";
 import { generateCartItemKey } from "../cart/cart";
-import type { OrderResponse, Product } from "../services/api";
+import type { Product } from "../services/api";
 import ActiveOrdersCarousel from "../components/ActiveOrdersCarousel";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
+import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
 
 export default function Home() {
   const navigate = useNavigate();
   const cart = useCart();
+  const { activeOrders } = useOrdersRealtime();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [productsData, setProductsData] = useState<{ foods: Product[]; beverages: Product[] }>({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeOrders, setActiveOrders] = useState<OrderResponse[]>([]);
 
   const handleMenuClick = () => {
     setSidebarOpen(true);
@@ -32,22 +33,12 @@ export default function Home() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch products and orders in parallel
-        const [productsResponse, ordersResponse] = await Promise.all([
-          apiService.getProducts(),
-          apiService.getUserOrders()
-        ]);
+        const productsResponse = await apiService.getProducts();
 
         if (productsResponse.success) {
           setProductsData(productsResponse.data);
         } else {
           setError(productsResponse.message || 'Error al cargar productos');
-        }
-        if (ordersResponse.success && ordersResponse.data) {
-          const activeOrders = ordersResponse.data.filter(order => 
-            order.status !== 'DELIVERED' && order.status !== 'CANCELLED'
-          );
-          setActiveOrders(activeOrders);
         }
       } catch (err) {
         setError('Error al cargar datos');
