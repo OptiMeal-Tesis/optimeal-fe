@@ -20,7 +20,6 @@ export const ForgotPassword = () => {
     
     const [errors, setErrors] = useState<{ 
         email?: string;
-        confirmationCode?: string;
         newPassword?: string;
         confirmPassword?: string;
     }>({});
@@ -32,8 +31,12 @@ export const ForgotPassword = () => {
         if (stepParam === 'reset') {
             setStep('reset');
             const emailParam = searchParams.get('email');
+            const codeParam = searchParams.get('code');
             if (emailParam) {
                 setEmail(emailParam);
+            }
+            if (codeParam) {
+                setConfirmationCode(codeParam);
             }
         }
     }, [searchParams]);
@@ -48,13 +51,6 @@ export const ForgotPassword = () => {
                     if (!emailRegex.test(value)) {
                         return "Formato de email inválido";
                     }
-                }
-                break;
-            case 'confirmationCode':
-                if (!value.trim()) {
-                    return "El código es obligatorio";
-                } else if (value.length < 4) {
-                    return "El código debe tener al menos 4 caracteres";
                 }
                 break;
             case 'newPassword':
@@ -112,11 +108,9 @@ export const ForgotPassword = () => {
         e.preventDefault();
         
         const nextErrors: typeof errors = {};
-        const confirmationCodeError = validateField('confirmationCode', confirmationCode);
         const passwordError = validateField('newPassword', newPassword);
         const confirmError = validateField('confirmPassword', confirmPassword);
-        
-        if (confirmationCodeError) nextErrors.confirmationCode = confirmationCodeError;
+
         if (passwordError) nextErrors.newPassword = passwordError;
         if (confirmError) nextErrors.confirmPassword = confirmError;
         
@@ -165,9 +159,6 @@ export const ForgotPassword = () => {
             switch (field) {
                 case 'email':
                     setEmail(value);
-                    break;
-                case 'confirmationCode':
-                    setConfirmationCode(value);
                     break;
                 case 'newPassword':
                     setNewPassword(value);
@@ -241,17 +232,6 @@ export const ForgotPassword = () => {
                 <p className="text-sub1">Restablecer Contraseña</p>
 
                 <form className="w-full flex flex-col gap-6" onSubmit={handleResetSubmit} noValidate>
-                    <CustomTextField
-                        label="Código de verificación"
-                        placeholder="Ingrese el código de 6 dígitos"
-                        type="text"
-                        autoComplete="off"
-                        value={confirmationCode}
-                        onChange={handleInputChange('confirmationCode')}
-                        error={Boolean(errors.confirmationCode)}
-                        helperText={errors.confirmationCode}
-                    />
-
                     <CustomTextField
                         label="Nueva contraseña"
                         placeholder="Ingrese su nueva contraseña"
