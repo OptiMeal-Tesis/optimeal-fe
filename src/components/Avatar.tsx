@@ -12,7 +12,19 @@ const getInitials = (name?: string) => {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "";
   
-  return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (!parts[0] || parts[0].length === 0) return "";
+  
+  let initials = parts[0][0].toUpperCase(); // Primera inicial del nombre
+  
+  if (parts.length >= 2 && parts[1] && parts[1].length > 0) {
+    initials += parts[1][0].toUpperCase(); // Primera inicial del apellido
+  }
+  
+  if (parts.length >= 3 && parts[2] && parts[2].length > 0) {
+    initials += parts[2][0].toUpperCase(); // Segunda inicial del apellido
+  }
+  
+  return initials;
 };
 
 const sizeClasses = {
