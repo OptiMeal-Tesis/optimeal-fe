@@ -5,14 +5,17 @@ import PageHeader from '../components/PageHeader';
 import OrderItemCard from '../components/OrderItemCard';
 import StatusChip from '../components/StatusChip';
 import formatDate from '../utils/formatDate';
+import { useOrdersRealtime } from '../contexts/OrdersRealtimeContext';
 
 export default function OrderDetails() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const { getOrderById } = useOrdersRealtime();
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+  
   useEffect(() => {
     const fetchOrder = async () => {
       if (!orderId) {
@@ -23,6 +26,16 @@ export default function OrderDetails() {
 
       try {
         setLoading(true);
+        
+        // First try to get from context (realtime data)
+        const orderFromContext = getOrderById(parseInt(orderId));
+        if (orderFromContext) {
+          setOrder(orderFromContext);
+          setLoading(false);
+          return;
+        }
+
+        // If not found in context, fetch from API
         const response = await apiService.getOrderById(parseInt(orderId));
         
         if (response.success && response.data) {
@@ -38,7 +51,17 @@ export default function OrderDetails() {
     };
 
     fetchOrder();
-  }, [orderId]);
+  }, [orderId, getOrderById]);
+
+  // Update order when context updates
+  useEffect(() => {
+    if (orderId) {
+      const orderFromContext = getOrderById(parseInt(orderId));
+      if (orderFromContext) {
+        setOrder(orderFromContext);
+      }
+    }
+  }, [orderId, getOrderById]);
 
   const getStatusMessage = (status: OrderStatus, shift: string) => {
     const shiftStartTime = shift.split('-')[0];

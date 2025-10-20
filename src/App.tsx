@@ -14,14 +14,16 @@ import { BrowserRouter as Router, Navigate,Route, Routes } from "react-router-do
 import EditItem from "./screens/EditItem";
 import ForgotPassword from "./screens/ForgotPassword";
 import { Toaster } from "react-hot-toast";
+import { OrdersRealtimeProvider } from "./contexts/OrdersRealtimeContext";
 
 
 function App() {
   return (
     <div className="h-screen overflow-hidden">
       <CartProvider>
-        <Router>
-          <Routes>
+        <OrdersRealtimeProvider>
+          <Router>
+            <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           
           <Route path="/login" element={
@@ -77,8 +79,9 @@ function App() {
           } />
           
           <Route path="*" element={<Navigate to="/home" replace />} />
-          </Routes>
-        </Router>
+            </Routes>
+          </Router>
+        </OrdersRealtimeProvider>
       </CartProvider>
       <Toaster toastOptions={{
         className: "toast-custom",
