@@ -5,7 +5,7 @@ import EyeIcon from "../assets/icons/EyeIcon";
 import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { authService } from "../services/auth";
 import Logo from "../assets/icons/Logo";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export const ForgotPassword = () => {
@@ -17,6 +17,7 @@ export const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
     
     const [errors, setErrors] = useState<{ 
         email?: string;
@@ -124,11 +125,9 @@ export const ForgotPassword = () => {
                     confirmationCode,
                     newPassword
                 });
-                toast.success('Contraseña restablecida correctamente');
+                navigate('/login');
                 setSearchParams({});
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 2000);
+                toast.success('Contraseña restablecida correctamente');
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : 'Error al restablecer la contraseña';
                 toast.error(errorMessage);
@@ -204,6 +203,7 @@ export const ForgotPassword = () => {
                             type="submit" 
                             fullWidth 
                             loading={isLoading}
+                            className="h-14"
                         >
                             {isLoading ? 'Enviando código...' : 'Enviar código de recuperación'}
                         </CustomButton>
@@ -247,6 +247,7 @@ export const ForgotPassword = () => {
                             variant="outlined"
                             onClick={handleResendCode}
                             loading={isResending}
+                            className="h-14"
                         >
                             {isResending ? 'Reenviando código...' : 'Reenviar código'}
                         </CustomButton>
@@ -305,6 +306,7 @@ export const ForgotPassword = () => {
                         type="submit" 
                         fullWidth 
                         loading={isLoading}
+                        className="h-14"
                     >
                         {isLoading ? 'Restableciendo contraseña...' : 'Restablecer contraseña'}
                     </CustomButton>
@@ -315,6 +317,7 @@ export const ForgotPassword = () => {
                         variant="outlined"
                         onClick={handleResendCode}
                         loading={isResending}
+                        className="h-14"
                     >
                         {isResending ? 'Reenviando código...' : 'Reenviar código'}
                     </CustomButton>

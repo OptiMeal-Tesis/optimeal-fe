@@ -250,7 +250,7 @@ export default function Register() {
             onRightIconClick={() => setShowConfirmPassword(prev => !prev)}
           />
 
-          <CustomButton type="submit" fullWidth loading={isLoading}>
+          <CustomButton type="submit" fullWidth loading={isLoading} className="h-14">
             {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
           </CustomButton>
         </form>
