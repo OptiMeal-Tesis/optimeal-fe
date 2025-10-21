@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import CustomTextField from "../components/CustomTextField";
 import CustomButton from "../components/CustomButton";
+import Avatar from "../components/Avatar";
 import { apiService } from "../services/api";
 import toast from "react-hot-toast";
 
-export default function EditProfile() {
+export const EditProfile = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
+    last_name: "",
     national_id: "",
     email: ""
   });
@@ -17,11 +19,13 @@ export default function EditProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     name: false,
+    last_name: false,
     national_id: false
   });
   const [userId, setUserId] = useState<number | null>(null);
   const [originalFormData, setOriginalFormData] = useState({
     name: "",
+    last_name: "",
     national_id: ""
   });
 
@@ -34,12 +38,14 @@ export default function EditProfile() {
         if (response.success && response.data) {
           const userData = {
             name: response.data.name || "",
+            last_name: response.data.lastName || "",
             national_id: response.data.national_id?.toString() || "",
             email: response.data.email || ""
           };
           setFormData(userData);
           setOriginalFormData({
             name: userData.name,
+            last_name: userData.last_name,
             national_id: userData.national_id
           });
           setUserId(Number(response.data.id));
@@ -77,6 +83,8 @@ export default function EditProfile() {
     switch (field) {
       case 'name':
         return value.trim() === "" || value.trim().length < 2;
+      case 'last_name':
+        return value.trim() === "" || value.trim().length < 2;
       case 'national_id':
         return value.trim() === "" || !/^\d{7,10}$/.test(value);
       default:
@@ -86,6 +94,7 @@ export default function EditProfile() {
 
   const formHasChanges = (): boolean => {
     return formData.name.trim() !== originalFormData.name.trim() ||
+           formData.last_name.trim() !== originalFormData.last_name.trim() ||
            formData.national_id.trim() !== originalFormData.national_id.trim();
   };
 
@@ -93,11 +102,12 @@ export default function EditProfile() {
     
     const errors = {
       name: validateField('name', formData.name),
+      last_name: validateField('last_name', formData.last_name),
       national_id: validateField('national_id', formData.national_id),
     };
     
     setFieldErrors(errors);
-    if (errors.name || errors.national_id) {
+    if (errors.name || errors.last_name || errors.national_id) {
       toast.error("Error al guardar cambios");
       return;
     }
@@ -117,14 +127,18 @@ export default function EditProfile() {
     try {
       const response = await apiService.updateUser(numericUserId, {
         name: formData.name.trim(),
+        lastName: formData.last_name.trim(),
         national_id: formData.national_id.trim(),
       });
       
-      if (response.success) {
-        toast.success("Perfil actualizado correctamente");
-        // Navigate back after showing success message
-        setTimeout(() => navigate('/home'), 1500);
-      } else {
+        if (response.success) {
+          toast.success("Perfil actualizado correctamente");
+          setOriginalFormData({
+            name: formData.name.trim(),
+            last_name: formData.last_name.trim(),
+            national_id: formData.national_id.trim(),
+          });
+        } else {
         toast.error(response.message || "Error al actualizar el perfil");
       }
     } catch (err) {
@@ -150,8 +164,11 @@ export default function EditProfile() {
       <PageHeader title="Editar Perfil" />
       
       <div className="p-8">
-        <div className="flex flex-col gap-6 w-full">
-          <CustomTextField
+        <div className="flex flex-col items-center gap-8 w-full">
+          <Avatar name={`${formData.name} ${formData.last_name}`.trim()} size="xl" />
+          
+          <div className="flex flex-col gap-6 w-full">
+            <CustomTextField
             label="Nombre"
             placeholder="Ingrese su nombre completo"
             type="text"
@@ -160,6 +177,17 @@ export default function EditProfile() {
             onChange={handleInputChange('name')}
             error={fieldErrors.name}
             helperText={fieldErrors.name ? (formData.name.trim().length < 2 ? "El nombre debe tener al menos 2 caracteres" : "El nombre es obligatorio") : ""}
+          />
+
+          <CustomTextField
+            label="Apellido"
+            placeholder="Ingrese su apellido completo"
+            type="text"
+            autoComplete="family-name"
+            value={formData.last_name}
+            onChange={handleInputChange('last_name')}
+            error={fieldErrors.last_name}
+            helperText={fieldErrors.last_name ? (formData.last_name.trim().length < 2 ? "El apellido debe tener al menos 2 caracteres" : "El apellido es obligatorio") : ""}
           />
 
           <CustomTextField
@@ -183,21 +211,39 @@ export default function EditProfile() {
             helperText="El email no se puede editar"
           />
 
+          </div>
         </div>
 
-        <div className="mt-6 w-full">
-          <CustomButton 
-            type="button" 
-            fullWidth
-            onClick={handleSave}
-            loading={isSaving}
-            disabled={!formHasChanges()}
-            className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300"
-          >
-            {isSaving ? 'Guardando...' : 'Guardar cambios'}
-          </CustomButton>
+        <div className="flex flex-col mt-6 gap-4 w-full">
+          <div className="w-full">
+            <CustomButton 
+              type="button" 
+              fullWidth
+              onClick={handleSave}
+              loading={isSaving}
+              disabled={!formHasChanges()}
+              className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 h-14"
+            >
+              {isSaving ? 'Guardando...' : 'Guardar cambios'}
+            </CustomButton>
+          </div>
+
+          <div className="w-full"> 
+            <CustomButton 
+              type="button" 
+              variant="outlined"
+              fullWidth
+              onClick={() => navigate(-1)}
+              className="bg-gray-500 text-white h-14"
+            > 
+              Cancelar
+            </CustomButton>
+          </div>
         </div>
+
       </div>
     </div>
   );
 }
+
+export default EditProfile;

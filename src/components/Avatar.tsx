@@ -14,14 +14,22 @@ const getInitials = (name?: string) => {
   
   if (!parts[0] || parts[0].length === 0) return "";
   
-  let initials = parts[0][0].toUpperCase(); // Primera inicial del nombre
+  let initials = parts[0][0].toUpperCase(); // Primera inicial del primer nombre
   
-  if (parts.length >= 2 && parts[1] && parts[1].length > 0) {
-    initials += parts[1][0].toUpperCase(); // Primera inicial del apellido
+  // Si hay 2 palabras: nombre + apellido
+  if (parts.length === 2) {
+    initials += parts[1][0].toUpperCase();
   }
-  
-  if (parts.length >= 3 && parts[2] && parts[2].length > 0) {
-    initials += parts[2][0].toUpperCase(); // Segunda inicial del apellido
+  // Si hay 3 palabras: nombre + apellido1 + apellido2
+  else if (parts.length === 3) {
+    initials += parts[1][0].toUpperCase();
+    initials += parts[2][0].toUpperCase();
+  }
+  // priorizamos apellidos
+  else if (parts.length >= 4) {
+    // Tomamos el penúltimo y último como apellidos
+    initials += parts[parts.length - 2][0].toUpperCase();
+    initials += parts[parts.length - 1][0].toUpperCase();
   }
   
   return initials;
