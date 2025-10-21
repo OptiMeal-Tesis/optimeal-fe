@@ -11,7 +11,7 @@ export default function SuccessScreen() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <p className="text-sub1-bold text-primary-600">
+          <p className="text-sub1-bold text-primary-500">
             ¡Cuenta Creada!
           </p>
           
@@ -20,7 +20,7 @@ export default function SuccessScreen() {
           </p>
           
           <p className="text-sub1 text-gray-700">
-            Iniciá sesión y realizá tu primer pedido.
+            Revisa tu casilla de correo para activar tu cuenta y realizá tu primer pedido.
           </p>
         </div>
 

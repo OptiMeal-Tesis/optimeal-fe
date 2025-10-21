@@ -29,6 +29,7 @@ export interface RegisterRequest {
     email: string;
     password: string;
     name: string;
+    lastName: string;
     national_id: string;
 }
 
@@ -36,6 +37,7 @@ export interface RegisterResponse extends AuthResponse {
     data?: {
         email: string;
         name: string;
+        lastName: string;
         national_id: string;
     };
 }
@@ -57,6 +59,7 @@ export interface User {
     id: number | string;
     email: string;
     name?: string;
+    lastName?: string;
     national_id?: string;
 }
 
@@ -323,7 +326,7 @@ class ApiService {
         });
     }
 
-    async updateUser(userId: number, userData: { name?: string; national_id?: string; email?: string }): Promise<UserResponse> {
+    async updateUser(userId: number, userData: { name?: string; lastName?: string; national_id?: string; email?: string }): Promise<UserResponse> {
         return this.request<UserResponse>(`/users/${userId}`, {
             method: 'PUT',
             body: JSON.stringify(userData),

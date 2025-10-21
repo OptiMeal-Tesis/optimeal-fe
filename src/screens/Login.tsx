@@ -103,7 +103,7 @@ export default function Login() {
                 </Link>
               </p>
             </div>
-            <CustomButton type="submit" fullWidth loading={isLoading} className="text-body1 py-2">
+            <CustomButton type="submit" fullWidth loading={isLoading} className="text-body1 py-2 h-14">
               {isLoading ? 'Iniciando sesión...' : 'Iniciar'}
             </CustomButton>
         </form>

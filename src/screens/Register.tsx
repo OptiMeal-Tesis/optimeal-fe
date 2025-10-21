@@ -13,6 +13,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
+    lastName: "",
     national_id: "",
     email: "",
     password: "",
@@ -23,6 +24,7 @@ export default function Register() {
   
   const [errors, setErrors] = useState<{
     name?: string;
+    lastName?: string;
     national_id?: string;
     email?: string;
     password?: string;
@@ -38,6 +40,13 @@ export default function Register() {
           return "El nombre es obligatorio";
         } else if (value.trim().length < 2) {
           return "El nombre debe tener al menos 2 caracteres";
+        }
+        break;
+      case 'lastName':
+        if (!value.trim()) {
+          return "El apellido es obligatorio";
+        } else if (value.trim().length < 2) {
+          return "El apellido debe tener al menos 2 caracteres";
         }
         break;
       case 'national_id':
@@ -96,7 +105,7 @@ export default function Register() {
     const next: typeof errors = {};
     
     // Validaciones frontend (matching backend rules)
-    const fields: (keyof typeof formData)[] = ['name', 'national_id', 'email', 'password', 'confirmPassword'];
+    const fields: (keyof typeof formData)[] = ['name', 'lastName', 'national_id', 'email', 'password', 'confirmPassword'];
     fields.forEach(field => {
       const error = validateField(field, formData[field]);
       if (error) {
@@ -110,6 +119,7 @@ export default function Register() {
       try {
         await authService.register({
           name: formData.name,
+          lastName: formData.lastName,
           national_id: formData.national_id,
           email: formData.email,
           password: formData.password
@@ -166,14 +176,26 @@ export default function Register() {
 
           <CustomTextField
             label="Nombre"
-            placeholder="Ingrese su nombre completo"
+            placeholder="Ingrese su nombre"
             type="text"
-            autoComplete="name"
+            autoComplete="given-name"
             value={formData.name}
             onChange={handleInputChange('name')}
             onBlur={handleBlur('name')}
             error={Boolean(errors.name)}
             helperText={errors.name}
+          />
+
+          <CustomTextField
+            label="Apellido"
+            placeholder="Ingrese su apellido"
+            type="text"
+            autoComplete="family-name"
+            value={formData.lastName}
+            onChange={handleInputChange('lastName')}
+            onBlur={handleBlur('lastName')}
+            error={Boolean(errors.lastName)}
+            helperText={errors.lastName}
           />
 
           <CustomTextField
@@ -228,7 +250,7 @@ export default function Register() {
             onRightIconClick={() => setShowConfirmPassword(prev => !prev)}
           />
 
-          <CustomButton type="submit" fullWidth loading={isLoading}>
+          <CustomButton type="submit" fullWidth loading={isLoading} className="h-14">
             {isLoading ? 'Creando cuenta...' : 'Crear cuenta'}
           </CustomButton>
         </form>

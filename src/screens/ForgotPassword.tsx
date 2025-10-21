@@ -5,18 +5,19 @@ import EyeIcon from "../assets/icons/EyeIcon";
 import EyeClosedIcon from "../assets/icons/EyeClosedIcon";
 import { authService } from "../services/auth";
 import Logo from "../assets/icons/Logo";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 export const ForgotPassword = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [step, setStep] = useState<'email' | 'reset'>('email');
+    const [step, setStep] = useState<'email' | 'email-sent' | 'reset'>('email');
     const [email, setEmail] = useState("");
     const [confirmationCode, setConfirmationCode] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const navigate = useNavigate();
     
     const [errors, setErrors] = useState<{ 
         email?: string;
@@ -92,8 +93,8 @@ export const ForgotPassword = () => {
         setIsLoading(true);
         try {
             await authService.forgotPassword(email);
-            setStep('reset');
-            setSearchParams({ step: 'reset', email: email });
+            setStep('email-sent');
+            setSearchParams({ step: 'email-sent'});
             setErrors({});
             toast.success('Código de verificación enviado correctamente');
         } catch (error) {
@@ -124,11 +125,9 @@ export const ForgotPassword = () => {
                     confirmationCode,
                     newPassword
                 });
-                toast.success('Contraseña restablecida correctamente');
+                navigate('/login');
                 setSearchParams({});
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 2000);
+                toast.success('Contraseña restablecida correctamente');
             } catch (error) {
                 const errorMessage = error instanceof Error ? error.message : 'Error al restablecer la contraseña';
                 toast.error(errorMessage);
@@ -204,10 +203,55 @@ export const ForgotPassword = () => {
                             type="submit" 
                             fullWidth 
                             loading={isLoading}
+                            className="h-14"
                         >
                             {isLoading ? 'Enviando código...' : 'Enviar código de recuperación'}
                         </CustomButton>
                     </form>
+
+                    <p className="text-body2 text-gray-600">
+                        ¿Recordaste tu contraseña?{" "}
+                        <Link
+                            to="/login"
+                            className="text-label-bold text-gray-500 underline underline-offset-2">
+                            Iniciar sesión
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (step === 'email-sent') {
+        return (
+            <div className="min-h-screen flex items-center p-7 bg-white">
+                <div className="w-full flex flex-col gap-6 text-center">
+                    <div className="flex justify-center">
+                        <Logo width={222} height={74}/>
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <p className="text-sub1">¡Email enviado!</p>
+                        <p className="text-body2 text-gray-600">
+                            Hemos enviado un código de verificación a <strong>{email}</strong>
+                        </p>
+                        <p className="text-body2 text-gray-600">
+                            Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.
+                        </p>
+                    </div>
+
+                    <div className="w-full flex flex-col gap-4">
+                        <CustomButton 
+                            type="button" 
+                            fullWidth 
+                            variant="outlined"
+                            onClick={handleResendCode}
+                            loading={isResending}
+                            className="h-14"
+                        >
+                            {isResending ? 'Reenviando código...' : 'Reenviar código'}
+                        </CustomButton>
+                    </div>
 
                     <p className="text-body2 text-gray-600">
                         ¿Recordaste tu contraseña?{" "}
@@ -262,6 +306,7 @@ export const ForgotPassword = () => {
                         type="submit" 
                         fullWidth 
                         loading={isLoading}
+                        className="h-14"
                     >
                         {isLoading ? 'Restableciendo contraseña...' : 'Restablecer contraseña'}
                     </CustomButton>
@@ -272,6 +317,7 @@ export const ForgotPassword = () => {
                         variant="outlined"
                         onClick={handleResendCode}
                         loading={isResending}
+                        className="h-14"
                     >
                         {isResending ? 'Reenviando código...' : 'Reenviar código'}
                     </CustomButton>
