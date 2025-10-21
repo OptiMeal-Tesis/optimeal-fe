@@ -7,6 +7,7 @@ import { Product } from '../services/api';
 import { apiService } from '../services/api';
 import CustomButton from '../components/CustomButton';
 import toast from 'react-hot-toast';
+import ImagePlaceholder from '../assets/images/image-placeholder.jpg';
 
 interface LoadingState {
   isLoading: boolean;
@@ -76,6 +77,7 @@ export default function CheckoutEditItemPage() {
           remove(itemKey);
         }
         toast.success('Ítem eliminado del carrito');
+        navigate(-1);
       } else {
         // Create cart item data
         const cartItemData = {
@@ -99,9 +101,10 @@ export default function CheckoutEditItemPage() {
         
         if (isEditingExistingItem) {
           toast.success('Cambios guardados exitosamente');
+          navigate(-1);
         } else {
           toast.success('Ítem agregado al carrito');
-          navigate('/checkout');
+          navigate(-1);
         }
       }
     } catch (error) {
@@ -182,8 +185,8 @@ export default function CheckoutEditItemPage() {
             name={product.name}
             description={product.description}
             price={product.price}
-            quantity={finalCartItem?.quantity ?? 1}
-            photo={product.photo}
+            quantity={finalCartItem?.quantity ?? 0}
+            photo={product.photo || ImagePlaceholder}
             sides={product.sides}
             restrictions={product.restrictions}
             clarifications={finalCartItem?.clarifications ?? ""}

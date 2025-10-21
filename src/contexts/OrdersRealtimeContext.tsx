@@ -71,7 +71,6 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
 
   // Handle new order broadcast
   const handleNewOrder = useCallback((payload: any) => {
-    console.log('📦 New order received:', payload);
     const newOrder = payload.order;
     
     setOrders(prevOrders => {
@@ -87,7 +86,6 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
 
   // Handle order status update
   const handleOrderStatusUpdate = useCallback((payload: any) => {
-    console.log('🔄 Order status updated:', payload);
     const updatedOrder = payload.order;
     
     setOrders(prevOrders => {
@@ -129,13 +127,9 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
       })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Subscribed to orders realtime channel');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('❌ Error subscribing to orders channel');
         } else if (status === 'TIMED_OUT') {
-          console.error('⏱️ Realtime subscription timed out');
         } else if (status === 'CLOSED') {
-          console.log('🔌 Realtime channel closed');
         }
       });
 
@@ -146,7 +140,6 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
-        console.log('🧹 Cleaned up realtime subscription');
       }
     };
   }, [fetchOrders, handleNewOrder, handleOrderStatusUpdate, isAuthenticated]);

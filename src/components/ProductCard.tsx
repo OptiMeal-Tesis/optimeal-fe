@@ -21,6 +21,7 @@ export interface ProductCardProps {
   onIncrease?: () => void;
   onDecrease?: () => void;
   onAdd?: () => void;
+  onCardClick?: () => void;
 }
 
 function renderRestrictionIcon(key: Restriction) {
@@ -51,14 +52,18 @@ export default function ProductCard({
   onIncrease,
   onDecrease,
   onAdd,
+  onCardClick,
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
   const isOutOfStock = stock === 0;
 
   return (
-    <div className="w-full flex gap-1.5 rounded-xl">
-      <div className="relative w-[133px] h-[140px] overflow-hidden bg-gray-100 rounded-lg">
+    <div 
+      className="w-full flex gap-1.5 rounded-xl" 
+      onClick={onCardClick}
+    >
+      <div className="relative w-[133px] h-[140px] flex-shrink-0 overflow-hidden bg-gray-100 rounded-lg">
         {!loaded && (
           <div className="absolute inset-0 animate-pulse bg-gray-200" />
         )}
@@ -75,10 +80,20 @@ export default function ProductCard({
         />
       </div>
 
-      <div className="flex-1 flex flex-col justify-between">
+      <div className="flex-1 flex flex-col justify-between min-w-0">
         <div className="flex flex-col gap-1">
-          <h3 className="text-body1-bold text-black leading-tight">{name}</h3>
-          <p className="text-body2 text-gray-600">{description}</p>
+          <h3 className="text-body1-bold text-black leading-relaxed truncate py-0.5" title={name}>
+              {name}
+          </h3>
+          <p className="text-body2 text-gray-600 leading-relaxed py-0.5" title={description} style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}>
+            {description}
+          </p>
 
           <div className="flex items-center gap-2 mt-2">
             {restrictions.map((r, idx) => (
@@ -93,7 +108,10 @@ export default function ProductCard({
           {variant === "default" && (
             <button
               type="button"
-              onClick={isOutOfStock ? undefined : onAdd}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isOutOfStock && onAdd) onAdd();
+              }}
               disabled={isOutOfStock}
               className={`flex items-center justify-center ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}`}
               aria-label="Agregar"
@@ -103,16 +121,24 @@ export default function ProductCard({
           )}
 
           {variant === "active" && (
-            <QuantityControl 
-              quantity={quantity} 
-              onDecrease={onDecrease!} 
-              onIncrease={onIncrease!} 
-              disabled={isOutOfStock}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+              <QuantityControl 
+                quantity={quantity} 
+                onDecrease={onDecrease!} 
+                onIncrease={onIncrease!} 
+                disabled={isOutOfStock}
+              />
+            </div>
           )}
 
           {variant === "summary" && (
-            <button type="button" aria-label="Editar" className="w-10 h-10 rounded-full flex items-center justify-center" style={{ border: '2px solid var(--color-primary-500)' }}>
+            <button 
+              type="button" 
+              onClick={(e) => e.stopPropagation()}
+              aria-label="Editar" 
+              className="w-10 h-10 rounded-full flex items-center justify-center" 
+              style={{ border: '2px solid var(--color-primary-500)' }}
+            >
               <span className="text-h2" style={{ color: 'var(--color-primary-500)' }}>✎</span>
             </button>
           )}

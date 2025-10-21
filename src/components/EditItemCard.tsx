@@ -135,7 +135,7 @@ export default function EditItemCard({
 
 
   return (
-    <Card>
+    <Card sx={{ borderRadius: '12px' }}>
       {/* Product Image */}
       <Box sx={{ width: '100%', height: 192, position: 'relative' }}>
         {photo ? (

@@ -54,6 +54,13 @@ export default function Home() {
       const totalQuantity = cart.getTotalQuantityByProductId(product.id);
       const hasActiveSides = product.sides && product.sides.some(s => s.isActive);
       
+      // Handler for clicking the card itself
+      const handleCardClick = () => {
+        const itemKey = generateCartItemKey(product.id, null);
+        navigate(`/checkout/edit/${product.id}?itemKey=${itemKey}`);
+      };
+
+      // Handler for clicking the + button
       const handleAdd = () => {
         if (hasActiveSides) {
           // Redirect to edit page for items with sides
@@ -71,7 +78,7 @@ export default function Home() {
         } else {
           // Find the item without sides and increase quantity
           const itemWithoutSides = Object.values(cart.items).find(
-            item => item.productId === product.id && !item.selectedSide
+            item => item.productId == product.id && !item.selectedSide
           );
           if (itemWithoutSides) {
             const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
@@ -102,6 +109,7 @@ export default function Home() {
           variant={totalQuantity > 0 ? "active" : "default"}
           quantity={totalQuantity}
           stock={product.stock}
+          onCardClick={handleCardClick}
           onAdd={handleAdd}
           onIncrease={handleIncrease}
           onDecrease={handleDecrease}

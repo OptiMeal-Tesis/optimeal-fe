@@ -282,7 +282,7 @@ export function CartProvider({ children }: CartProviderProps) {
 
   // Helper functions
   const getItemsByProductId = (productId: ProductId): CartItem[] => {
-    return Object.values(state.items).filter(item => item.productId === productId);
+    return Object.values(state.items).filter(item => item.productId == productId);
   };
 
   const getTotalQuantityByProductId = (productId: ProductId): number => {
