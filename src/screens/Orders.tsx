@@ -31,7 +31,11 @@ export default function Orders() {
   };
 
   const handleBackNavigation = () => {
-    window.history.length > 1 ? navigate(-1) : navigate('/home');
+    if (success == 'true') {
+      navigate('/home');
+    } else {
+      window.history.length > 1 ? navigate(-1) : navigate('/home');
+    }
   };
 
   if (loading) {
