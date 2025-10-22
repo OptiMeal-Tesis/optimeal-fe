@@ -335,10 +335,10 @@ export default function EditItemCard({
                 }
               }}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5}}>
               <Typography 
                 variant="caption" 
-                sx={{ color: 'var(--color-gray-500)', font: 'var(--font-family-sans)', fontSize: 'var(--font-size-label)', mt: 1}}
+                sx={{ color: 'var(--color-gray-500)', font: 'var(--font-family-sans)', fontSize: 'var(--font-size-label)'}}
               >
                 Se leerán tus aclaraciones, sujetas a disponibilidades.
               </Typography>
