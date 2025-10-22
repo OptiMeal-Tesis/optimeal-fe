@@ -121,7 +121,7 @@ export default function CheckoutEditItemPage() {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         <PageHeader title="Editar ítem" />
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-white">
           <div className="p-4">
             <div className="bg-white rounded-xl overflow-hidden">
               {/* Image skeleton */}
@@ -153,7 +153,7 @@ export default function CheckoutEditItemPage() {
     return (
       <div className="h-screen flex flex-col overflow-hidden">
         <PageHeader title="Error" />
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-white">
           <div className="p-4">
             <div className="rounded-xl p-6 text-center gap-10">
               <h2 className="text-sub1 text-primary-500">Hubo un error al cargar esta página</h2>
@@ -178,7 +178,7 @@ export default function CheckoutEditItemPage() {
     <div className="h-screen flex flex-col overflow-hidden">
       <PageHeader title={product.name} />
       
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-white">
         <div className="p-4">
           <EditItemCard
             productId={product.id}
