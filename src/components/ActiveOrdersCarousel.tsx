@@ -46,7 +46,7 @@ export default function ActiveOrdersCarousel({ orders, onOrderClick, className =
 
   return (
     <div>
-      <div className="overflow-hidden mr-[3p]" ref={emblaRef}>
+      <div className="overflow-hidden mr-[3px]" ref={emblaRef}>
         <div className="flex gap-2">
           {orders.map((order) => (
             <div 

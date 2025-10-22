@@ -15,6 +15,7 @@ import QuantityControl from './QuantityControl';
 import CustomButton from './CustomButton';
 import { Side, Restriction } from '../services/api';
 import CustomTextField from './CustomTextField';
+import AlertIcon from '../assets/icons/AlertIcon';
 
 export type EditItemCardProps = {
   productId: string;
@@ -182,6 +183,13 @@ export default function EditItemCard({
           <p className="text-body2 text-gray-600">
             {description}
           </p>
+
+          {isOutOfStock && (
+            <Box className='bg-[rgba(255,165,0,0.3)] border-[#FFA500] border-2 text-black rounded-xl p-3 text-center flex flex-row items-center gap-2 h-14'>
+              <AlertIcon />
+              Producto sin stock
+            </Box>
+          )}
         </div>
         
         {/* Restriction Chips */}
@@ -203,9 +211,15 @@ export default function EditItemCard({
           <FormControl fullWidth>
             <InputLabel 
               sx={{ 
-                color: 'var(--color-primary-500)',
+                color: isOutOfStock ? 'var(--color-gray-500)' : 'var(--color-primary-500)',
                 '&.Mui-focused': {
                   color: 'var(--color-primary-500)'
+                },
+                '&.Mui-disabled': {
+                  color: 'var(--color-gray-500)'
+                },
+                '&.Mui-disabled.Mui-focused': {
+                  color: 'var(--color-gray-500)'
                 },
                 font: 'var(--font-family-sans)',
                 fontSize: 'var(--font-size-body1)',
@@ -226,6 +240,7 @@ export default function EditItemCard({
                   }
                 }
               }}
+              disabled={isOutOfStock}
               sx={{
                 borderRadius: '12px',
                 font: 'var(--font-family-sans)',
@@ -239,6 +254,15 @@ export default function EditItemCard({
                 },
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                   borderColor: 'var(--color-primary-500)'
+                },
+                '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'var(--color-gray-200)'
+                },
+                '&.Mui-disabled:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'var(--color-gray-200)'
+                },
+                '&.Mui-disabled.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: 'var(--color-gray-200)'
                 }
               }}
             > 
@@ -264,6 +288,7 @@ export default function EditItemCard({
               placeholder="Aclaraciones para la cocina"
               variant="outlined"
               inputProps={{ maxLength: 100 }}
+              disabled={isOutOfStock}
               sx={{
                 font: 'var(--font-family-sans)',
                 fontSize: 'var(--font-size-body1)',
@@ -287,6 +312,20 @@ export default function EditItemCard({
                   },
                   '&.Mui-focused fieldset': {
                     borderColor: 'var(--color-primary-500)'
+                  },
+                  '&.Mui-disabled': {
+                    backgroundColor: 'var(--color-gray-100)',
+                    color: 'var(--color-gray-500)',
+                    borderColor: 'var(--color-gray-200)',
+                    '& fieldset': {
+                      borderColor: 'var(--color-gray-200)'
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'var(--color-gray-200)'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'var(--color-gray-200)'
+                    }
                   }
                 }
               }}

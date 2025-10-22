@@ -60,7 +60,7 @@ export default function ProductCard({
 
   return (
     <div 
-      className="w-full flex gap-1.5 rounded-xl" 
+      className={`w-full flex gap-1.5 rounded-xl ${isOutOfStock ? 'opacity-50' : ''}`}
       onClick={onCardClick}
     >
       <div className="relative w-[133px] h-[140px] flex-shrink-0 overflow-hidden bg-gray-100 rounded-lg">

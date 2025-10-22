@@ -26,11 +26,11 @@ export default function PageHeader({ title, subtitle, onNavigate }: PageHeaderPr
       >
         <BackArrowIcon width={24} height={25} color="var(--color-black)" />
       </button>
-      <div className="flex flex-col gap-1 w-full items-center">
-        <p className="text-sub1 text-black">
+      <div className="flex flex-col w-full items-center px-12">
+        <p className="text-sub1 text-black truncate w-full text-center leading-relaxed py-1">
           {title}
         </p>
-        <p className="text-body2 text-gray-400">
+        <p className="text-body2 text-gray-400 truncate w-full text-center leading-relaxed">
           {subtitle}
         </p>
       </div>
