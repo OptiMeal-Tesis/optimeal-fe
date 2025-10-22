@@ -63,7 +63,7 @@ export default function ProductCard({
       className={`w-full flex gap-1.5 rounded-xl ${isOutOfStock ? 'opacity-50' : ''}`}
       onClick={onCardClick}
     >
-      <div className="relative w-[133px] h-[140px] flex-shrink-0 overflow-hidden bg-gray-100 rounded-lg">
+      <div className="relative w-[133px] h-[140px] flex-shrink-0 overflow-hidden bg-gray-100 rounded-xl">
         {!loaded && (
           <div className="absolute inset-0 animate-pulse bg-gray-200" />
         )}
@@ -74,7 +74,7 @@ export default function ProductCard({
           decoding="async"
           fetchPriority="low"
           onLoad={() => setLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 rounded-xl ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
         />

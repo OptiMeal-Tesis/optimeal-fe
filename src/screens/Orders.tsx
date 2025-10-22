@@ -18,11 +18,6 @@ export default function Orders() {
     if (success === 'true') {
       const currentUser = authService.getCurrentUser();
       clearCartFromStorage(currentUser?.email || null);
-      const newUrl = new URL(window.location.href);
-      [
-        'success',
-      ].forEach((k) => newUrl.searchParams.delete(k));
-      window.history.replaceState({}, '', newUrl.toString());
     }
   }, [success]);
 

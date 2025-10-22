@@ -14,7 +14,7 @@ export default function ActiveOrderCard({ order, onClick, className = "" }: Acti
 
   return (
     <div 
-      className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity bg-white border-2 border-primary-500 ${className}`}
+      className={`flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer hover:opacity-80 transition-opacity bg-white border-2 border-primary-500 ${className}`}
       onClick={onClick}
     >
       <div className="flex-1">
