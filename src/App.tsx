@@ -1,4 +1,5 @@
 import "./App.css";
+import Landing from "./screens/Landing";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import SuccessScreen from "./screens/SuccessScreen";
@@ -24,7 +25,7 @@ function App() {
         <OrdersRealtimeProvider>
           <Router>
             <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Landing />} />
           
           <Route path="/login" element={
             <PublicRoute>
