@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { clearCartFromStorage } from "../cart/cart";
 import { authService } from "../services/auth";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
+import CustomButton from '../components/CustomButton';
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -98,9 +99,17 @@ export default function Orders() {
 
         {/* Empty State */}
         {!loading && activeOrders.length === 0 && previousOrders.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="text-body1 text-gray-500 mb-2">No tienes pedidos aún</div>
-            <div className="text-body2 text-gray-400">Realiza tu primer pedido desde el menú</div>
+          <div className="flex flex-col items-center justify-center py-16 gap-6">
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="text-body1 text-gray-500 mb-2">No tienes pedidos aún</div>
+              <div className="text-body2 text-gray-400">Realiza tu primer pedido desde el menú</div>
+            </div>
+            <CustomButton
+              onClick={() => navigate('/home')}
+              className="p-10 bg-primary-500 text-white rounded-lg"
+            >
+              Ir al menú
+            </CustomButton>
           </div>
         )}
       </div>

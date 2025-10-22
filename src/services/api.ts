@@ -243,6 +243,10 @@ class ApiService {
             const responseData = await response.json();
 
             if (!response.ok) {
+                if (response.status === 401) {
+                    this.handleUnauthorized();
+                }
+                
                 const error = new Error(responseData.message || `HTTP error! status: ${response.status}`);
                 (error as any).status = response.status;
                 (error as any).errors = responseData.errors;
@@ -255,6 +259,29 @@ class ApiService {
                 throw error;
             }
             throw new Error('An unexpected error occurred');
+        }
+    }
+
+    private handleUnauthorized(): void {
+        // Clear tokens and redirect to login
+        try {
+            // Import authService dynamically to avoid circular dependency
+            import('./auth').then(({ authService }) => {
+                authService.logout();
+            }).catch(() => {
+                // Fallback: clear tokens manually if authService is not available
+                localStorage.removeItem('optimeal_access_token');
+                localStorage.removeItem('optimeal_refresh_token');
+                localStorage.removeItem('optimeal_id_token');
+                localStorage.removeItem('optimeal_user_email');
+                localStorage.removeItem('optimeal_token_expires');
+                localStorage.removeItem('optimeal_cart');
+            });
+            
+            // Redirect to login page
+            window.location.href = '/login';
+        } catch (error) {
+            window.location.href = '/login';
         }
     }
 
