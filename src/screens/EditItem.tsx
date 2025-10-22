@@ -31,8 +31,8 @@ export default function CheckoutEditItemPage() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  // Simple logic: if itemKey exists, we're editing; if not, we're adding new
-  const isEditingExistingItem = !!itemKey;
+  // Check if item exists in cart: if itemKey exists in cart items, we're editing; if not, we're adding new
+  const isEditingExistingItem = itemKey ? !!items[itemKey] : false;
   const finalCartItem = itemKey ? items[itemKey] : undefined;
   
 

@@ -31,7 +31,7 @@ export type EditItemCardProps = {
   admitsClarifications?: boolean;
   type?: "FOOD" | "BEVERAGE" | string;
   stock?: number;
-  isEditingExistingItem?: boolean; // New prop to indicate if editing existing item
+  isEditingExistingItem?: boolean;
   onEdit: (payload: {
     productId: string;
     quantity: number;
@@ -92,10 +92,15 @@ export default function EditItemCard({
   const isOutOfStock = stock === 0;
   
   // Save button should be disabled if:
-  // 1. No changes have been made, OR
-  // 2. Required side is missing
-  const isSaveDisabled = !hasChanges || 
-    (sideIsRequired && !selectedSideId);
+  // When adding a new item:
+  //   1. Quantity is 0 (required field), OR
+  //   2. Required side is missing
+  // When editing an existing item:
+  //   1. No changes have been made, OR
+  //   2. Quantity > 0 AND required side is missing
+  const isSaveDisabled = isEditingExistingItem 
+    ? (!hasChanges || (quantity > 0 && sideIsRequired && !selectedSideId))
+    : (quantity === 0 || (sideIsRequired && !selectedSideId));
 
   const handleQuantityIncrease = () => {
     if (quantity < 99 && !isOutOfStock && quantity < (stock || 0)) {

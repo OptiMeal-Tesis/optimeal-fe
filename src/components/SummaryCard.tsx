@@ -11,7 +11,7 @@ interface SummaryItemCardProps {
   sides: Side[];
   selectedSide?: string | null;
   onQuantityChange: (productId: string, newQuantity: number) => void;
-  onEdit?: (productId: string) => void;
+  onEdit?: (itemKey: string, productId: string) => void;
   showEditButton?: boolean;
   className?: string;
   itemKey: string;
@@ -47,7 +47,7 @@ export default function SummaryItemCard({
 
   const handleEdit = () => {
     if (onEdit) {
-      onEdit(productId);
+      onEdit(itemKey, productId);
     }
   };
 

@@ -59,16 +59,15 @@ export default function Checkout() {
     }
   };
 
-  const handleEdit = (productId: string) => {
-    // Find the specific item being edited to get its exact details
-    const itemToEdit = cartItems.find(item => item.productId === productId);
+  const handleEdit = (itemKey: string, productId: string) => {
+    // Get the specific item being edited using the itemKey
+    const itemToEdit = cart.items[itemKey];
     if (itemToEdit) {
       // Don't allow editing if product is out of stock
       if (itemToEdit.stock === 0) {
         return;
       }
       
-      const itemKey = generateCartItemKey(itemToEdit.productId, itemToEdit.selectedSide);
       navigate(`/checkout/edit/${productId}?itemKey=${itemKey}`);
     }
   };

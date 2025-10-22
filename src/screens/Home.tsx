@@ -88,13 +88,18 @@ export default function Home() {
       };
 
       const handleDecrease = () => {
-        // Find the item without sides and decrease quantity
-        const itemWithoutSides = Object.values(cart.items).find(
-          item => item.productId === product.id && !item.selectedSide
-        );
-        if (itemWithoutSides) {
-          const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
-          cart.decrease(itemKey);
+        if (hasActiveSides) {
+          // Navigate to checkout page so user can choose which specific item to decrease
+          navigate('/checkout');
+        } else {
+          // Find the item without sides and decrease quantity
+          const itemWithoutSides = Object.values(cart.items).find(
+            item => item.productId == product.id && !item.selectedSide
+          );
+          if (itemWithoutSides) {
+            const itemKey = generateCartItemKey(product.id, itemWithoutSides.selectedSide);
+            cart.decrease(itemKey);
+          }
         }
       };
 
