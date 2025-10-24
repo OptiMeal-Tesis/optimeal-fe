@@ -10,6 +10,7 @@ import {
 import { supabase } from '../services/supabase';
 import { apiService, OrderResponse } from '../services/api';
 import { RealtimeChannel } from '@supabase/supabase-js';
+import { authService } from '../services/auth';
 
 const ORDERS_CHANNEL = 'orders-realtime';
 
@@ -33,21 +34,13 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const channelRef = useRef<RealtimeChannel | null>(null);
-
-  // Check if user is authenticated
-  const isAuthenticated = useCallback(() => {
-    try {
-      return !!localStorage.getItem('optimeal_access_token');
-    } catch {
-      return false;
-    }
-  }, []);
 
   // Fetch orders from API
   const fetchOrders = useCallback(async () => {
     // Only fetch if user is authenticated
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       setLoading(false);
       return;
     }
@@ -104,10 +97,22 @@ export function OrdersRealtimeProvider({ children }: OrdersRealtimeProviderProps
     });
   }, []);
 
+  // Listen to authentication changes
+  useEffect(() => {
+    const unsubscribe = authService.subscribe((authState) => {
+      setIsAuthenticated(authState.isAuthenticated);
+    });
+
+    // Set initial authentication state
+    setIsAuthenticated(authService.isAuthenticated());
+
+    return unsubscribe;
+  }, []);
+
   // Setup Supabase Realtime subscription
   useEffect(() => {
     // Only setup subscription if user is authenticated
-    if (!isAuthenticated()) {
+    if (!isAuthenticated) {
       setLoading(false);
       return;
     }

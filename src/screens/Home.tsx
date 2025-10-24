@@ -6,11 +6,13 @@ import ProductCard, { type Restriction } from "../components/ProductCard";
 import SubtotalButton from "../components/SubtotalButton";
 import { apiService } from "../services/api";
 import { useCart } from "../cart";
-import { generateCartItemKey } from "../cart/cart";
+import { clearCartFromStorage, generateCartItemKey } from "../cart/cart";
 import type { Product } from "../services/api";
 import ActiveOrdersCarousel from "../components/ActiveOrdersCarousel";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
+import { toast } from "react-hot-toast";
+import { authService } from "../services/auth";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -20,6 +22,16 @@ export default function Home() {
   const [productsData, setProductsData] = useState<{ foods: Product[]; beverages: Product[] }>({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const urlParams = new URLSearchParams(window.location.search);
+  const success = urlParams.get('success');
+
+  useEffect(() => {
+    if (success == 'true') {
+      toast.success('Pedido realizado correctamente');
+      const currentUser = authService.getCurrentUser();
+      clearCartFromStorage(currentUser?.email || null);
+    }
+  }, [success]);
 
   const handleMenuClick = () => {
     setSidebarOpen(true);

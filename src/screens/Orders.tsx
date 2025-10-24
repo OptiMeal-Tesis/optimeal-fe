@@ -1,36 +1,20 @@
-import React, { useEffect } from 'react';
 import PageHeader from "../components/PageHeader";
 import OrderCard from "../components/OrderCard";
 import ActiveOrderCard from "../components/ActiveOrderCard";
 import { useNavigate } from "react-router-dom";
-import { clearCartFromStorage } from "../cart/cart";
-import { authService } from "../services/auth";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
 import CustomButton from '../components/CustomButton';
 
 export default function Orders() {
   const navigate = useNavigate();
   const { activeOrders, previousOrders, loading, error } = useOrdersRealtime();
-  const urlParams = new URLSearchParams(window.location.search);
-  const success = urlParams.get('success');
-
-  useEffect(() => {
-    if (success === 'true') {
-      const currentUser = authService.getCurrentUser();
-      clearCartFromStorage(currentUser?.email || null);
-    }
-  }, [success]);
 
   const handleOrderClick = (orderId: number) => {
     navigate(`/orders/${orderId}`);
   };
 
   const handleBackNavigation = () => {
-    if (success == 'true') {
-      navigate('/home');
-    } else {
-      window.history.length > 1 ? navigate(-1) : navigate('/home');
-    }
+    window.history.length > 1 ? navigate(-1) : navigate('/home');
   };
 
   if (loading) {
