@@ -185,7 +185,7 @@ export default function CheckoutEditItemPage() {
             name={product.name}
             description={product.description}
             price={product.price}
-            quantity={finalCartItem?.quantity ?? 0}
+            quantity={finalCartItem?.quantity ?? 1}
             photo={product.photo || ImagePlaceholder}
             sides={product.sides}
             restrictions={product.restrictions}
