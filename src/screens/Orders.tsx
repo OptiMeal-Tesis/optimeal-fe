@@ -4,6 +4,7 @@ import ActiveOrderCard from "../components/ActiveOrderCard";
 import { useNavigate } from "react-router-dom";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
 import CustomButton from '../components/CustomButton';
+import Skeleton from "../components/Skeleton";
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -21,8 +22,24 @@ export default function Orders() {
     return (
       <div className="min-h-screen bg-white">
         <PageHeader title="Pedidos" />
-        <div className="p-8 flex justify-center items-center">
-          <div className="text-body1 text-gray-500">Cargando pedidos...</div>
+        <div className="p-5 flex flex-col gap-6">
+          <div className="flex flex-col">
+            <p className="text-sub1 text-black mb-4">Pedidos activos</p>
+            <div className="flex flex-col gap-4">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <Skeleton key={`active-${idx}`} variant="activeOrder" />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-sub1 text-black mb-4">Pedidos anteriores</p>
+            <div className="flex flex-col gap-4">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <Skeleton key={`previous-${idx}`} variant="activeOrder" />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );

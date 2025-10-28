@@ -9,6 +9,7 @@ import { useCart } from "../cart";
 import { clearCartFromStorage, generateCartItemKey } from "../cart/cart";
 import type { Product } from "../services/api";
 import ActiveOrdersCarousel from "../components/ActiveOrdersCarousel";
+import Skeleton from "../components/Skeleton";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
 import { toast } from "react-hot-toast";
@@ -30,6 +31,8 @@ export default function Home() {
       toast.success('Pedido realizado correctamente');
       const currentUser = authService.getCurrentUser();
       clearCartFromStorage(currentUser?.email || null);
+      urlParams.delete('success');
+      window.history.replaceState({}, '', window.location.pathname);
     }
   }, [success]);
 
@@ -154,8 +157,24 @@ export default function Home() {
           )}
           
           {loading && (
-            <div className="flex justify-center items-center py-8">
-              <p className="text-body1 text-gray-500">Cargando productos...</p>
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <h1 className="text-sub1 text-black">Platos</h1>
+                <div className="flex flex-col gap-3">
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton key={`foods-${idx}`} variant="product" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h1 className="text-sub1 text-black">Bebidas</h1>
+                <div className="flex flex-col gap-3">
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <Skeleton key={`beverages-${idx}`} variant="product" />
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

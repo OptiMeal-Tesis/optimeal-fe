@@ -6,6 +6,7 @@ import CustomButton from "../components/CustomButton";
 import Avatar from "../components/Avatar";
 import { apiService } from "../services/api";
 import toast from "react-hot-toast";
+import Skeleton from "../components/Skeleton";
 
 export const EditProfile = () => {
   const navigate = useNavigate();
@@ -152,8 +153,8 @@ export const EditProfile = () => {
     return (
       <div className="min-h-screen bg-white">
         <PageHeader title="Editar Perfil" />
-        <div className="p-8 flex justify-center items-center">
-          <p className="text-gray-500">Cargando...</p>
+        <div className="p-8">
+          <Skeleton variant="profile" />
         </div>
       </div>
     );
