@@ -213,7 +213,7 @@ export default function EditItemCard({
 
         {/* Side Selection */}
         {hasActiveSides && (
-          <FormControl fullWidth>
+          <FormControl fullWidth required>
             <InputLabel 
               sx={{ 
                 color: isOutOfStock ? 'var(--color-gray-500)' : 'var(--color-primary-500)',
@@ -228,6 +228,9 @@ export default function EditItemCard({
                 },
                 font: 'var(--font-family-sans)',
                 fontSize: 'var(--font-size-body1)',
+                '& .MuiInputLabel-asterisk': {
+                  color: 'var(--color-error)',
+                },
               }}
             >Guarnición
             </InputLabel>
