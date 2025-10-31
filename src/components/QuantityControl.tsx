@@ -1,7 +1,7 @@
 interface QuantityControlProps {
   quantity: number;
-  onDecrease: () => void;
-  onIncrease: () => void;
+  onDecrease: (e?: React.MouseEvent) => void;
+  onIncrease: (e?: React.MouseEvent) => void;
   disabled?: boolean;
 }
 
@@ -18,7 +18,10 @@ export default function QuantityControl({ quantity, onDecrease, onIncrease, disa
       <button 
         type="button" 
         className={`pb-0.5 text-body1-bold ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
-        onClick={disabled ? undefined : onDecrease}
+        onClick={disabled ? undefined : (e) => {
+          e.stopPropagation();
+          onDecrease(e);
+        }}
         disabled={disabled}
       >
         -
@@ -29,7 +32,10 @@ export default function QuantityControl({ quantity, onDecrease, onIncrease, disa
       <button 
         type="button" 
         className={`flex items-center justify-center text-body1-bold leading-none ${disabled ? 'text-gray-400 cursor-not-allowed' : 'text-primary-500'}`} 
-        onClick={disabled ? undefined : onIncrease}
+        onClick={disabled ? undefined : (e) => {
+          e.stopPropagation();
+          onIncrease(e);
+        }}
         disabled={disabled}
       >
         +

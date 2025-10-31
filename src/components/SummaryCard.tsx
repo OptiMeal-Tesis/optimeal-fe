@@ -1,6 +1,8 @@
 import QuantityControl from './QuantityControl';
 import EditIcon from '../assets/icons/EditIcon';
 import { Side } from '../services/api';
+import { generateCartItemKey } from '../cart/cart';
+import { useNavigate } from 'react-router-dom';
 
 interface SummaryItemCardProps {
   productId: string;
@@ -32,6 +34,7 @@ export default function SummaryItemCard({
   itemKey
 }: SummaryItemCardProps) {
   const peso = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
+  const navigate = useNavigate();
 
   const handleDecrease = () => {
     if (quantity > 1) {
@@ -68,8 +71,14 @@ export default function SummaryItemCard({
   const isSideSelected = sides.length > 0 && selectedSide;
   const showSideText = sides.length > 0; 
 
+
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      const itemKey = generateCartItemKey(productId, selectedSide);
+      navigate(`/checkout/edit/${productId}?itemKey=${itemKey}`);
+    };
+
   return (
-    <div className={`flex gap-2.5 bg-white ${className}`}>
+    <div className={`flex gap-2.5 bg-white ${className}`} onClick={handleCardClick}>
       {photo && (
         <img
           src={photo}
