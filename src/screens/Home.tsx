@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -12,8 +12,8 @@ import ActiveOrdersCarousel from "../components/ActiveOrdersCarousel";
 import Skeleton from "../components/Skeleton";
 import ImagePlaceholder from "../assets/images/image-placeholder.jpg";
 import { useOrdersRealtime } from "../contexts/OrdersRealtimeContext";
-import { toast } from "react-hot-toast";
 import { authService } from "../services/auth";
+import SuccessAnimation from "../components/SuccessAnimation";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -23,18 +23,28 @@ export default function Home() {
   const [productsData, setProductsData] = useState<{ foods: Product[]; beverages: Product[] }>({ foods: [], beverages: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<'foods' | 'beverages'>('foods');
   const urlParams = new URLSearchParams(window.location.search);
   const success = urlParams.get('success');
 
+  const foodsRef = useRef<HTMLDivElement | null>(null);
+  const beveragesRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     if (success == 'true') {
-      toast.success('Pedido realizado correctamente');
       const currentUser = authService.getCurrentUser();
       clearCartFromStorage(currentUser?.email || null);
-      urlParams.delete('success');
-      window.history.replaceState({}, '', window.location.pathname);
+      setShowSuccessAnimation(true);
     }
   }, [success]);
+
+  const handleSuccessAnimationComplete = () => {
+    setShowSuccessAnimation(false);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete('success');
+    window.history.replaceState({}, '', window.location.pathname);
+  };
 
   const handleMenuClick = () => {
     setSidebarOpen(true);
@@ -138,8 +148,48 @@ export default function Home() {
     });
   };
 
+  const SegmentedControl = ({ selectedSection, setSelectedSection }: { selectedSection: 'foods' | 'beverages', setSelectedSection: (section: 'foods' | 'beverages') => void }) => {
+    return (
+      <>
+        <div className="flex justify-center">
+          <div className="inline-flex rounded-full p-1 bg-gray-100">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedSection('foods');
+                requestAnimationFrame(() => {
+                  foodsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+              }}
+              className={`${selectedSection === 'foods' ? 'bg-primary-500 text-white' : 'text-gray-600'} rounded-full px-6 py-2 text-sm font-medium transition-colors`}
+            >
+              Platos
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedSection('beverages');
+                requestAnimationFrame(() => {
+                  beveragesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+              }}
+              className={`${selectedSection === 'beverages' ? 'bg-primary-500 text-white' : 'text-gray-600'} rounded-full px-6 py-2 text-sm font-medium transition-colors`}
+            >
+              Bebidas
+            </button>
+          </div>
+        </div>
+      </>
+    )
+  };
+
   return (
     <div className="bg-white h-screen flex flex-col overflow-hidden">
+      {/* Success Animation */}
+      {showSuccessAnimation && (
+        <SuccessAnimation onComplete={handleSuccessAnimationComplete} />
+      )}
+
       {/* Sticky Header */}
       <div className="sticky top-0 z-50 bg-white">
         <Header onMenuClick={handleMenuClick} />
@@ -147,14 +197,19 @@ export default function Home() {
 
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
-        <div className="p-4 gap-3">
-          {activeOrders.length > 0 && (
-            <ActiveOrdersCarousel 
-              orders={activeOrders} 
-              className="mb-3"
-              onOrderClick={(orderId) => navigate(`/orders/${orderId}`)}
-            />
-          )}
+          <div className="p-4 gap-3 flex flex-col">
+            <div className="flex flex-col gap-3">
+              {activeOrders.length > 0 && (
+                <ActiveOrdersCarousel 
+                  orders={activeOrders} 
+                  className="mb-3"
+                  onOrderClick={(orderId) => navigate(`/orders/${orderId}`)}
+                />
+              )}
+              {(productsData.foods.length > 0 && productsData.beverages.length > 0) && (
+                <SegmentedControl selectedSection={selectedSection} setSelectedSection={setSelectedSection} />
+              )}
+            </div>
           
           {loading && (
             <div className="flex flex-col gap-6">
@@ -194,7 +249,7 @@ export default function Home() {
             <div className="flex flex-col gap-6 pb-28">
               {/* Foods Section */}
               {productsData.foods.length > 0 && (
-                <div className="flex flex-col gap-2">
+                <div ref={foodsRef} className="flex flex-col gap-2 scroll-mt-28">
                   <h1 className="text-sub1 text-black">
                     Platos
                   </h1>
@@ -206,7 +261,7 @@ export default function Home() {
 
               {/* Beverages Section */}
               {productsData.beverages.length > 0 && (
-                <div className="flex flex-col gap-2">
+                <div ref={beveragesRef} className="flex flex-col gap-2 scroll-mt-28">
                   <h1 className="text-sub1 text-black">
                     Bebidas
                   </h1>
