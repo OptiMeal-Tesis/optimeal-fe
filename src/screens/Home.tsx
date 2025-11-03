@@ -202,7 +202,6 @@ export default function Home() {
               {activeOrders.length > 0 && (
                 <ActiveOrdersCarousel 
                   orders={activeOrders} 
-                  className="mb-3"
                   onOrderClick={(orderId) => navigate(`/orders/${orderId}`)}
                 />
               )}

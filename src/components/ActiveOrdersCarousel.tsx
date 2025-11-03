@@ -36,16 +36,18 @@ export default function ActiveOrdersCarousel({ orders, onOrderClick, className =
 
   if (orders.length === 1) {
     return (
-      <ActiveOrderCard
-        order={orders[0]}
-        onClick={() => onOrderClick(orders[0].id)}
-        className={className}
-      />
+      <div className="-mx-4 px-4 bg-primary-500 p-4 rounded-b-2xl -mt-4">
+        <ActiveOrderCard
+          order={orders[0]}
+          onClick={() => onOrderClick(orders[0].id)}
+          className={className}
+        />
+      </div>
     );
   }
 
   return (
-    <div>
+    <div className="bg-primary-500 p-4 rounded-b-2xl -mx-4 flex flex-col gap-2 -mt-4">
       <div className="overflow-hidden mr-[3px]" ref={emblaRef}>
         <div className="flex gap-2">
           {orders.map((order) => (
@@ -64,15 +66,15 @@ export default function ActiveOrdersCarousel({ orders, onOrderClick, className =
       </div>
 
       {/* Pagination Dots */}
-      <div className="flex justify-center mt-3 space-x-2">
+      <div className="flex justify-center space-x-2">
         {orders.map((_, index) => (
           <button
             key={index}
             onClick={() => emblaApi?.scrollTo(index)}
             className={`w-2 h-2 rounded-full transition-colors ${
               index === selectedIndex 
-                ? 'bg-primary-500' 
-                : 'bg-gray-300 hover:bg-gray-400'
+                ? 'bg-white' 
+                : 'bg-gray-500 hover:bg-gray-400'
             }`}
             aria-label={`Go to order ${index + 1}`}
           />
