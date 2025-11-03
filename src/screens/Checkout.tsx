@@ -213,9 +213,11 @@ export default function Checkout() {
       if (response.success && response.data?.initPoint) {
         window.location.href = response.data.initPoint;
       } else {
+        setIsProcessingPayment(false);
         toast.error('Error al procesar el pago. Por favor intenta nuevamente.');
       }
     } catch (error) {
+      setIsProcessingPayment(false);
       console.error('Error during checkout:', error);
       
       if (error instanceof Error) {
@@ -231,8 +233,6 @@ export default function Checkout() {
       } else {
         toast.error('Error inesperado al procesar el pago');
       }
-    } finally {
-      setIsProcessingPayment(false);
     }
   };
 
